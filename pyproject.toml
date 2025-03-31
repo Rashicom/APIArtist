@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = {extras = ["standard"], version = "^0.115.12"}
+motor = {extras = ["srv"], version = "^3.7.0"}
 
 
 [build-system]
