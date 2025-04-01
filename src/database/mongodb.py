@@ -1,6 +1,4 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from fastapi import FastAPI
-from contextlib import asynccontextmanager
 
 
 MONGO_URI = "mongodb://localhost:27017"
@@ -29,12 +27,6 @@ class MongoDBConnection:
 
 
 mongodb = MongoDBConnection()
-
-@asynccontextmanager
-async def mongodb_lifespan(app: FastAPI):
-    await mongodb.initialize_connection()
-    yield
-    await mongodb.close_connection()
 
 
 async def get_database() -> AsyncIOMotorDatabase:

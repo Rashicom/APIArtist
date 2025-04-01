@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.11"
 fastapi = {extras = ["standard"], version = "^0.115.12"}
 motor = {extras = ["srv"], version = "^3.7.0"}
+redis = "^5.2.1"
+pydantic-settings = "^2.8.1"
 
 
 [build-system]

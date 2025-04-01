@@ -1,5 +1,17 @@
 from fastapi import FastAPI
-from database.mongodb import mongodb_lifespan
+from contextlib import asynccontextmanager
+from database.mongodb import mongodb
+from database.redis import redis_db
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await mongodb.initialize_connection()
+    await redis_db.initialize_connection()
+    yield
+    await mongodb.close_connection()
+    await redis_db.close_connection()
+
 
 app = FastAPI(
     title="API Artist",
@@ -8,5 +20,5 @@ app = FastAPI(
     docs_url="/",
     redoc_url="/docs",
 
-    lifespan=mongodb_lifespan
+    lifespan=lifespan
 )
