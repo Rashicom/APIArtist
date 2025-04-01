@@ -1,8 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from config import get_settings
 
-
-MONGO_URI = "mongodb://localhost:27017"
-DB_NAME = "mydatabase"
+settings = get_settings()
 
 class MongoDBConnection:
     def __init__(self):
@@ -10,8 +9,8 @@ class MongoDBConnection:
         self.db = None
     
     async def initialize_connection(self):
-        self.client = AsyncIOMotorClient(MONGO_URI)
-        self.db = self.client[DB_NAME]
+        self.client = AsyncIOMotorClient(settings.MONGODB_URI)
+        self.db = self.client[settings.MONGODB_DB_NAME]
 
         # Test connection
         respose = await self.db.command("ping")

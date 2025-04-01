@@ -1,4 +1,7 @@
 import redis.asyncio as redis
+from config import get_settings
+
+settings = get_settings()
 
 
 class RedisConnection:
@@ -9,11 +12,11 @@ class RedisConnection:
     async def initialize_connection(self):
         # Initialize Redis connection
         self.connection_pool = redis.ConnectionPool(
-            host='localhost',
-            port=6379,
-            db=0,
-            max_connections=100,
-            password="123",
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            db=settings.REDIS_DB,
+            max_connections=settings.REDIS_MAX_CONNECTIONS,
+            password=settings.REDIS_PASSWORD,
             decode_responses=True,
         )
         self.cache = redis.Redis(connection_pool=self.connection_pool)
