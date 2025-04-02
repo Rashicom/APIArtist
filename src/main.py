@@ -4,6 +4,9 @@ from database.mongodb import mongodb
 from database.redis import redis_db
 from api import router
 
+import os 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await mongodb.initialize_connection()
