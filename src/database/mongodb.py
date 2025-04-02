@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from config import get_settings
+from beanie import init_beanie
 
 settings = get_settings()
 
@@ -16,8 +17,10 @@ class MongoDBConnection:
         respose = await self.db.command("ping")
         if int(respose["ok"]) != 1:
             raise Exception("MongoDB initialization Failed")
-        else:
-            print("MongoDB initialized successfully")
+        
+        print("MongoDB initialized successfully")
+        await init_beanie(database=self.db, document_models=[])
+        print("Beanie initialized successfully")
 
     async def close_connection(self):
         if self.client:
