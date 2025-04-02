@@ -2,13 +2,19 @@ from fastapi import APIRouter, Depends, Request
 import google_auth_oauthlib.flow
 from config import get_settings
 from .auth import GoogleOAuth
+from .schema import OAuthResponseSchema, OAuthRequestSchema
 
 settings = get_settings()
 
 router = APIRouter()
 
 
-@router.get('/login/google')
+@router.get(
+  '/login/google',
+  summary="login",
+  description="Login with Google OAuth",
+  response_model=OAuthRequestSchema
+)
 async def google_auth():
     flow = google_auth_oauthlib.flow.Flow.from_client_config(
         {
@@ -31,7 +37,12 @@ async def google_auth():
     return {"authorization_url":authorization_url}
 
 
-@router.get('/callback/google')
+@router.get(
+  '/callback/google',
+  summary="callback",
+  description="Callback from Google OAuth",
+  response_model=OAuthResponseSchema
+)
 async def google_callback(request:Request):
     state = request.query_params.get("state")
     flow = google_auth_oauthlib.flow.Flow.from_client_config(
@@ -64,7 +75,7 @@ async def google_callback(request:Request):
     userinfo = google_auth.get_user_info(token)
 
     # create user in database
-    
+
     # create jwt token
     return {"token":"jwt token", "refresh":"refresh token"}
 
