@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from database.mongodb import mongodb
 from database.redis import redis_db
-
+from api import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,3 +22,5 @@ app = FastAPI(
 
     lifespan=lifespan
 )
+
+app.include_router(router)

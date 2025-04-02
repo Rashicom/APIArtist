@@ -17,6 +17,12 @@ class Settings(BaseSettings):
     REDIS_MAX_CONNECTIONS: int = 100
     REDIS_PASSWORD: str = "password"
 
+    # google auth credentials
+    CLIENT_ID: str = None
+    PROJECT_ID: str = None
+    CLIENT_SECRET: str = None
+    AUTH_REDIRECT_URL: str = None
+
     model_config = SettingsConfigDict(env_file=".env")
 
 
