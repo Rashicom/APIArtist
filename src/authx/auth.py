@@ -8,6 +8,6 @@ class GoogleOAuth:
         user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
-            response = await client.get(user_info_url, rheaders=headers, timeout=10)
+            response = await client.get(user_info_url, headers=headers, timeout=10)
             response.raise_for_status()
             return response.json()

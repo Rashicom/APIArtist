@@ -3,6 +3,9 @@ import google_auth_oauthlib.flow
 from config import get_settings
 from .auth import GoogleOAuth
 from .schema import OAuthResponseSchema, OAuthRequestSchema
+from .repository import UserRepository
+from .models import User
+from typing import List
 
 settings = get_settings()
 
@@ -72,11 +75,18 @@ async def google_callback(request:Request):
     
     # fetch user information using toke
     google_auth = GoogleOAuth()
-    userinfo = google_auth.get_user_info(token)
-
+    userinfo = await google_auth.get_user_info(token)
+    print(userinfo)
     # create user in database
 
     # create jwt token
     return {"token":"jwt token", "refresh":"refresh token"}
 
 
+
+@router.get(
+  "/users",
+  response_model=List[User]
+)
+async def get_users():
+    return await UserRepository.get_all_users()

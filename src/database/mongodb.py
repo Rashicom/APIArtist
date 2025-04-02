@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from config import get_settings
 from beanie import init_beanie
+from authx.models import User
 
 settings = get_settings()
 
@@ -19,7 +20,7 @@ class MongoDBConnection:
             raise Exception("MongoDB initialization Failed")
         
         print("MongoDB initialized successfully")
-        await init_beanie(database=self.db, document_models=[])
+        await init_beanie(database=self.db, document_models=[User])
         print("Beanie initialized successfully")
 
     async def close_connection(self):
