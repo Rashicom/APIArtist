@@ -3,13 +3,16 @@ from pydantic import Field, EmailStr
 from datetime import datetime, timezone
 
 class BaseMTimestampMixinodel:
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
 
 class User(Document, BaseMTimestampMixinodel):
     email: EmailStr
     name: str
+
     google_sub_id: str
+    token: str
+    refresh_token: str
 
     @before_event
     async def update_time(self):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, HTTPException, status
 import google_auth_oauthlib.flow
 from config import get_settings
 from .auth import GoogleOAuth
@@ -71,15 +71,27 @@ async def google_callback(request:Request):
     # fetch token from credentials
     token = credentials.token
     refresh_token = credentials.refresh_token
-    granted_scopes= credentials.granted_scopes
     
     # fetch user information using toke
     google_auth = GoogleOAuth()
     userinfo = await google_auth.get_user_info(token)
-    print(userinfo)
+    
     # create user in database
+    user_obj = await UserRepository.get_user_by_email(userinfo.get("email"))
 
+    if user_obj is None:
+        user_obj = await UserRepository.create_user(
+            email=userinfo.get("email"),
+            name=userinfo.get("name"),
+            google_sub_id=userinfo.get("sub"),
+            token=str(token),
+            refresh_token=str(refresh_token),
+        )
+    if user_obj is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Some error found")
+    
     # create jwt token
+    
     return {"token":"jwt token", "refresh":"refresh token"}
 
 
