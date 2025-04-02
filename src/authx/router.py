@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, Request
-from fastapi.security import OAuth2AuthorizationCodeBearer
-import google.oauth2.credentials
 import google_auth_oauthlib.flow
 from config import get_settings
+from .auth import GoogleOAuth
 
 settings = get_settings()
 
@@ -29,8 +28,6 @@ async def google_auth():
         access_type='offline',
         include_granted_scopes='true'
     )
-    print(authorization_url)
-    print(state)
     return {"authorization_url":authorization_url}
 
 
@@ -63,10 +60,12 @@ async def google_callback(request:Request):
     granted_scopes= credentials.granted_scopes
     
     # fetch user information using toke
+    google_auth = GoogleOAuth()
+    userinfo = google_auth.get_user_info(token)
 
     # create user in database
-
-    # redirect to profile page
-    return {"google_auth":"call back recieved"}
+    
+    # create jwt token
+    return {"token":"jwt token", "refresh":"refresh token"}
 
 
