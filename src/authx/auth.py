@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, status
 from typing import Annotated
 from .repository import UserRepository
 from .models import User
+import google_auth_oauthlib.flow
 
 settings = get_settings()
 auth2_schema = HTTPBearer()
@@ -59,6 +60,32 @@ class GoogleOAuth:
     def __init__(self):
         pass
 
+    async def get_authorization_url(self):
+        flow = google_auth_oauthlib.flow.Flow.from_client_config(
+        {
+          "web": {
+            "client_id": settings.CLIENT_ID,
+            "project_id": settings.PROJECT_ID,
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_secret": settings.CLIENT_SECRET
+          }
+        },
+        scopes=["openid", "https://www.googleapis.com/auth/userinfo.email"],
+        )
+        flow.redirect_uri = settings.AUTH_REDIRECT_URL
+
+        # state is used for csrf protection, state is already included in authorization url
+        authorization_url, state = flow.authorization_url(
+            access_type='offline',
+            include_granted_scopes='true'
+        )
+        return authorization_url
+    
+    async def get_access_token(self, code):
+        pass
+    
     async def get_user_info(self, token):
         user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
         headers = {"Authorization": f"Bearer {token}"}
