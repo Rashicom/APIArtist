@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     CLIENT_SECRET: str = None
     AUTH_REDIRECT_URL: str = None
 
+    # jwt token credentials
+    SECRET_KEY: str = None
+    JWT_HASH_ALGORITHM: str = None
+    JWT_EXPIRY_MINUTE: int = None
+    REFRESH_JWT_EXPIRY_MINUTE: int = None
+
     model_config = SettingsConfigDict(env_file=".env")
 
 

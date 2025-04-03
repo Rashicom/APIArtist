@@ -7,6 +7,9 @@ class UserRepository:
     
     async def get_user_by_email(email):
         return await User.find_one({"email": email})
+        
+    async def get_user_by_id(id):
+        return await User.get(id)
 
     async def create_user(*args, **kwargs):
         try:

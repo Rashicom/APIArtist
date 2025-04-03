@@ -20,3 +20,6 @@ class User(Document, BaseMTimestampMixinodel):
     
     class Settings:
         collection = "users"
+
+    class Config:
+        exclude = {"token", "refresh_token", "google_sub_id"}

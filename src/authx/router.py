@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 import google_auth_oauthlib.flow
 from config import get_settings
-from .auth import GoogleOAuth
+from .auth import GoogleOAuth, CurrentUser, create_access_token, create_refresh_token
 from .schema import OAuthResponseSchema, OAuthRequestSchema
 from .repository import UserRepository
 from .models import User
@@ -90,15 +90,14 @@ async def google_callback(request:Request):
     if user_obj is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Some error found")
     
-    # create jwt token
-    
-    return {"token":"jwt token", "refresh":"refresh token"}
+    # create jwt token and return response
+    return {"token":create_access_token(str(user_obj.id)), "refresh":create_refresh_token(str(user_obj.id))}
 
 
 
 @router.get(
-  "/users",
-  response_model=List[User]
+  "/me",
+  response_model=User
 )
-async def get_users():
-    return await UserRepository.get_all_users()
+async def get_me(user:CurrentUser):
+    return user
