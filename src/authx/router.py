@@ -6,6 +6,7 @@ from .schema import OAuthResponseSchema, OAuthRequestSchema
 from .repository import UserRepository
 from .models import User
 from typing import List
+from database.redis import redis_cache
 
 settings = get_settings()
 
@@ -18,9 +19,13 @@ router = APIRouter()
   description="Login with Google OAuth",
   response_model=OAuthRequestSchema
 )
-async def google_auth():
+async def google_auth(cache:redis_cache):
     auth_generator = GoogleOAuth()
     authorization_url, state = await auth_generator.get_authorization_url()
+
+    # set state in cache for csrf check
+    await cache.setex(f"oauth_state:{state}", 300, "valid")
+
     return {"authorization_url":authorization_url}
 
 @router.get(
@@ -29,19 +34,29 @@ async def google_auth():
   description="Callback from Google OAuth",
   response_model=OAuthResponseSchema
 )
-async def google_callback(request:Request):
+async def google_callback(request:Request, cache:redis_cache):
     state = request.query_params.get("state")
     code = request.query_params.get("code")
-    # TODO: get state from redis and ensure states are matching
 
     google_auth = GoogleOAuth()
+
+    # check csrf
+    if not cache.get(f"oauth_state:{state}"):
+        raise HTTPException(status=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired state token")
+    
+    # delete state from cache after check
+    cache.delete(f"oauth_state:{state}")
+
+    # get access token from google
     credentials = await google_auth.get_tokens(code)
     
     token = credentials.get("access_token")
     refresh_token = credentials.get("refresh_token", None)
+
+    # retrieve user information using token
     userinfo = await google_auth.get_user_info(token)
     
-    # create user in database
+    # create user if new user, else get user
     user_obj = await UserRepository.get_user_by_email(userinfo.get("email"))
 
     if user_obj is None:
@@ -53,7 +68,7 @@ async def google_callback(request:Request):
             refresh_token=str(refresh_token),
         )
     if user_obj is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Some error found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Some error occured")
     
     # create jwt token and return response
     return {"token":create_access_token(str(user_obj.id)), "refresh":create_refresh_token(str(user_obj.id))}
@@ -64,5 +79,5 @@ async def google_callback(request:Request):
   "/me",
   response_model=User
 )
-async def get_me(user:CurrentUser):
+async def get_me(user:CurrentUser, cache:redis_cache):
     return user

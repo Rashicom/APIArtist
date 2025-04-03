@@ -9,6 +9,7 @@ from .repository import UserRepository
 from .models import User
 import google_auth_oauthlib.flow
 
+
 settings = get_settings()
 auth2_schema = HTTPBearer()
 
@@ -76,11 +77,6 @@ class GoogleOAuth:
         )
         flow.redirect_uri = settings.AUTH_REDIRECT_URL
 
-        # state is used for csrf protection, state is included in authorization url
-        # store state in redis.
-        # in call back url we check the cache.state == query_params.state to prevent csrf attacks
-        # TODO: save state in redis
-
         authorization_url, state = flow.authorization_url(
             access_type='offline',
             include_granted_scopes='true'
@@ -101,10 +97,6 @@ class GoogleOAuth:
             response.raise_for_status()
             return response.json()
     
-    async def is_valied_state(self, state):
-        # check to prevent csrf attacks
-        # TODO: retrive state from state and check cache.state == state
-        pass
 
     async def get_user_info(self, token):
         user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"

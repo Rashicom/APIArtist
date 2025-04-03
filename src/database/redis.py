@@ -1,5 +1,7 @@
 import redis.asyncio as redis
 from config import get_settings
+from fastapi import Depends
+from typing import Annotated
 
 settings = get_settings()
 
@@ -38,3 +40,5 @@ redis_db = RedisConnection()
 
 async def get_cache():
     return redis_db.cache
+
+redis_cache = Annotated[redis.Redis, Depends(get_cache)]
