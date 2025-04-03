@@ -76,16 +76,36 @@ class GoogleOAuth:
         )
         flow.redirect_uri = settings.AUTH_REDIRECT_URL
 
-        # state is used for csrf protection, state is already included in authorization url
+        # state is used for csrf protection, state is included in authorization url
+        # store state in redis.
+        # in call back url we check the cache.state == query_params.state to prevent csrf attacks
+        # TODO: save state in redis
+
         authorization_url, state = flow.authorization_url(
             access_type='offline',
             include_granted_scopes='true'
         )
-        return authorization_url
+        return authorization_url, state
     
-    async def get_access_token(self, code):
+    async def get_tokens(self, code):
+        google_token_url = "https://oauth2.googleapis.com/token"
+        data = {
+            "code": code,
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "redirect_uri": settings.AUTH_REDIRECT_URL,
+            "grant_type": "authorization_code"
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(google_token_url, json=data)
+            response.raise_for_status()
+            return response.json()
+    
+    async def is_valied_state(self, state):
+        # check to prevent csrf attacks
+        # TODO: retrive state from state and check cache.state == state
         pass
-    
+
     async def get_user_info(self, token):
         user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
         headers = {"Authorization": f"Bearer {token}"}

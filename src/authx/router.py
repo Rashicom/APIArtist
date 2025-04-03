@@ -20,7 +20,7 @@ router = APIRouter()
 )
 async def google_auth():
     auth_generator = GoogleOAuth()
-    authorization_url = await auth_generator.get_authorization_url()
+    authorization_url, state = await auth_generator.get_authorization_url()
     return {"authorization_url":authorization_url}
 
 @router.get(
@@ -31,32 +31,14 @@ async def google_auth():
 )
 async def google_callback(request:Request):
     state = request.query_params.get("state")
-    flow = google_auth_oauthlib.flow.Flow.from_client_config(
-        {
-          "web": {
-            "client_id": settings.CLIENT_ID,
-            "project_id": settings.PROJECT_ID,
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_secret": settings.CLIENT_SECRET
-          }
-        },
-        scopes=["openid", "https://www.googleapis.com/auth/userinfo.email"],
-        state=state
-    )
-    flow.redirect_uri = settings.AUTH_REDIRECT_URL
+    code = request.query_params.get("code")
+    # TODO: get state from redis and ensure states are matching
 
-    authorization_response = str(request.url)
-    flow.fetch_token(authorization_response=authorization_response)
-    credentials = flow.credentials
-
-    # fetch token from credentials
-    token = credentials.token
-    refresh_token = credentials.refresh_token
-    
-    # fetch user information using toke
     google_auth = GoogleOAuth()
+    credentials = await google_auth.get_tokens(code)
+    
+    token = credentials.get("access_token")
+    refresh_token = credentials.get("refresh_token", None)
     userinfo = await google_auth.get_user_info(token)
     
     # create user in database
