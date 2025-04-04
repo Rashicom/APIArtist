@@ -33,7 +33,7 @@ class RedisConnection:
     
     async def close_connection(self):
         if self.cache:
-            self.cache.aclose()
+            await self.cache.aclose()
             print("Redis connection closed")
 
 redis_db = RedisConnection()

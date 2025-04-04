@@ -25,7 +25,7 @@ class MongoDBConnection:
 
     async def close_connection(self):
         if self.client:
-            await self.client.close()
+            self.client.close()
             print("MongoDB connection closed")
 
 

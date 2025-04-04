@@ -3,4 +3,4 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-router.include_router(authx_router, prefix="/authx")
+router.include_router(authx_router, prefix="/authx", tags=["AuthX"])
