@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class OAuthRequestSchema(BaseModel):
@@ -7,3 +7,11 @@ class OAuthRequestSchema(BaseModel):
 class OAuthResponseSchema(BaseModel):
     token: str
     refresh: str
+
+class UserResponseSchema(BaseModel):
+    """
+    User response schema by excluding sensitive information such as tokens
+    """
+    id: str
+    email: EmailStr
+    name: str

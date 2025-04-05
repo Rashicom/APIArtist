@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 import google_auth_oauthlib.flow
 from config import get_settings
 from .auth import GoogleOAuth, CurrentUser, create_access_token, create_refresh_token
-from .schema import OAuthResponseSchema, OAuthRequestSchema
+from .schema import OAuthResponseSchema, OAuthRequestSchema, UserResponseSchema
 from .repository import UserRepository
 from .models import User
 from typing import List
@@ -41,11 +41,11 @@ async def google_callback(request:Request, cache:redis_cache):
     google_auth = GoogleOAuth()
 
     # check csrf
-    if not cache.get(f"oauth_state:{state}"):
+    if not await cache.get(f"oauth_state:{state}"):
         raise HTTPException(status=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired state token")
     
     # delete state from cache after check
-    cache.delete(f"oauth_state:{state}")
+    await cache.delete(f"oauth_state:{state}")
 
     # get access token from google
     credentials = await google_auth.get_tokens(code)
