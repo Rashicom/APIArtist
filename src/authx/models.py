@@ -10,9 +10,9 @@ class User(Document, BaseMTimestampMixinodel):
     email: EmailStr
     name: str
 
-    google_sub_id: str
-    token: str
-    refresh_token: str
+    google_sub_id: str = Field(exclude=True)
+    token: str = Field(exclude=True)
+    refresh_token: str = Field(exclude=True)
 
     @before_event
     async def update_time(self):

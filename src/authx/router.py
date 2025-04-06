@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 import google_auth_oauthlib.flow
 from config import get_settings
 from .auth import GoogleOAuth, CurrentUser, create_access_token, create_refresh_token
-from .schema import OAuthResponseSchema, OAuthRequestSchema, UserResponseSchema
+from .schema import OAuthResponseSchema, OAuthRequestSchema
 from .repository import UserRepository
 from .models import User
-from typing import List
 from database.redis import redis_cache
 
 settings = get_settings()
