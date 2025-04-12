@@ -23,7 +23,8 @@ async def create_project(user:CurrentUser, project_data:ProjectRequestSchema):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Cound not create project")
-    
+
+
 @router.get(
     "/list",
     summary="List projects",
@@ -31,4 +32,15 @@ async def create_project(user:CurrentUser, project_data:ProjectRequestSchema):
     response_model=List[ProjectResponseSchema]
 )
 async def list_projects(user:CurrentUser):
-    return await ProjectRepository.filter(user=user)
+    return await ProjectRepository.get_user_projects(user)
+
+
+
+@router.delete(
+    "/delete/{id}",
+    summary="Delete project",
+    description="Delete project",
+)
+async def delete_project(user:CurrentUser,id:int):
+    await ProjectRepository.delete_project(user,id)
+    
