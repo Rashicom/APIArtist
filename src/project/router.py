@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Response, status
 from .models import Project
 from authx.auth import CurrentUser
 from .repository import ProjectRepository
@@ -41,6 +41,7 @@ async def list_projects(user:CurrentUser):
     summary="Delete project",
     description="Delete project",
 )
-async def delete_project(user:CurrentUser,id:int):
+async def delete_project(user:CurrentUser,id:str):
     await ProjectRepository.delete_project(user,id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
     
