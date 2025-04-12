@@ -1,12 +1,10 @@
-from beanie import Document, before_event
+from beanie import Document, before_event, Insert, Update
 from pydantic import Field, EmailStr
 from datetime import datetime, timezone
+from utils.models import TimestampMixinodel
 
-class BaseMTimestampMixinodel:
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
 
-class User(Document, BaseMTimestampMixinodel):
+class User(Document, TimestampMixinodel):
     email: EmailStr
     name: str
 
@@ -14,7 +12,7 @@ class User(Document, BaseMTimestampMixinodel):
     token: str = Field(exclude=True)
     refresh_token: str = Field(exclude=True)
 
-    @before_event
+    @before_event(Update)
     async def update_time(self):
         self.updated_at = datetime.now(timezone.utc)
     

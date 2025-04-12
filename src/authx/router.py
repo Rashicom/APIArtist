@@ -41,7 +41,7 @@ async def google_callback(request:Request, cache:redis_cache):
 
     # check csrf
     if not await cache.get(f"oauth_state:{state}"):
-        raise HTTPException(status=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired state token")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired state token")
     
     # delete state from cache after check
     await cache.delete(f"oauth_state:{state}")
