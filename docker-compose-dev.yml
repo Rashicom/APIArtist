@@ -1,0 +1,11 @@
+services:
+  db:
+    env_file:
+      - .env.dev
+
+  apiartist:
+    command: bash -c "uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
+  
+  pdadmin:
+    env_file:
+      - .env.dev
