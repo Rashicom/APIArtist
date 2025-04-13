@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:alpine
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379"
+  
+  apiartist:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-level critical"
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - redis
+  
+  pdadmin:
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    ports:
+      - 8888:80
+    depends_on:
+      - db
+
+
+volumes:
+  postgres_data:
+  
