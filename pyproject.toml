@@ -8,6 +8,15 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = {extras = ["standard"], version = "^0.115.12"}
+motor = {extras = ["srv"], version = "^3.7.0"}
+redis = "^5.2.1"
+pydantic-settings = "^2.8.1"
+google-api-python-client = "^2.166.0"
+google-auth = "^2.38.0"
+google-auth-oauthlib = "^1.2.1"
+google-auth-httplib2 = "^0.2.0"
+beanie = "^1.29.0"
+pyjwt = "^2.10.1"
 
 
 [build-system]
