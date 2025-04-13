@@ -4,6 +4,7 @@ from authx.auth import CurrentUser
 from .repository import ProjectRepository
 from .schema import ProjectRequestSchema, ProjectResponseSchema
 from typing import List
+from beanie import BeanieObjectId
 
 router = APIRouter()
 
@@ -41,7 +42,7 @@ async def list_projects(user:CurrentUser):
     summary="Delete project",
     description="Delete project",
 )
-async def delete_project(user:CurrentUser,id:str):
+async def delete_project(user:CurrentUser,id:BeanieObjectId):
     await ProjectRepository.delete_project(user,id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
     
