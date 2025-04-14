@@ -1,9 +1,9 @@
-name: Production Test API Artist
+name: Dev Test API Artist
 
 on:
   push:
     branches:
-      - Production
+      - staging
 
 jobs:
   test_project:
