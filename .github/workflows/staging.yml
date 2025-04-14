@@ -1,0 +1,13 @@
+name: Dev Test API Artist
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  test_project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2 
