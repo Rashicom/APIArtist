@@ -20,6 +20,12 @@ class Endpoints(Document):
 
     methods: List[HttpMethods]
 
+    meta = {
+        'indexes': [
+            {'field':('project', 'endpoint'), 'unique':True}
+        ]
+    }
+
 
 class ResponseData(Document):
     endpoint = Link[Endpoints]
