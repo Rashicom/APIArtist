@@ -1,0 +1,13 @@
+name: main Test API Artist
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test_project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2 
