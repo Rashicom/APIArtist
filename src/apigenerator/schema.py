@@ -3,7 +3,6 @@ from beanie import BeanieObjectId
 from typing import Dict, List
 
 class EndpointsBaseSchema(BaseModel):
-    user: BeanieObjectId
     project: BeanieObjectId
     
     name: str
