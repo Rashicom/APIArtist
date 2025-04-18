@@ -17,14 +17,22 @@ class Endpoints(Document):
 
     name: str = None
     endpoint: str
+    
+    # dynamic endpoint
+    is_dynamic_endpoint: bool = False
+
+    # if not dynamic endpoint, static data can be served
+    """
+    Example
+        static_data = {
+            "get":{data},
+            "post":{},
+            "patch":{}
+        }
+    """
+    static_data: Dict[str, Any]
 
     methods: List[HttpMethods]
-
-    meta = {
-        'indexes': [
-            {'field':('project', 'endpoint'), 'unique':True}
-        ]
-    }
 
 
 class ResponseData(Document):
