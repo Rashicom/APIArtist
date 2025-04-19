@@ -5,7 +5,7 @@ from .repository import EndpointRepository
 
 router = APIRouter()
 
-router.post(
+@router.post(
     "/create",
     summary="Create endpoint",
     description="Create endpoint",
