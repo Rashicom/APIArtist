@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Response
 from authx.auth import CurrentUser
-from .schema import EndpointsRequestSchema, EndpointsResponseSchema
+from .schema import EndpointsRequestSchema, EndpointsResponseSchema, EndpointsUpdateSchema
 from .repository import EndpointRepository
 from project.repository import ProjectRepository
 from beanie import BeanieObjectId
@@ -48,8 +48,8 @@ async def get_endpoint(user:CurrentUser, id: BeanieObjectId):
     description="Update endpoint",
     response_model=EndpointsResponseSchema
 )
-async def update_endpoint(user:CurrentUser, id: BeanieObjectId):
-    pass
+async def update_endpoint(user:CurrentUser, id: BeanieObjectId, data:EndpointsUpdateSchema):
+    return await EndpointRepository.update(user=user, id=id, data=data)
 
 
 @router.delete(

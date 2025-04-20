@@ -59,6 +59,17 @@ class EndpointsRequestSchema(EndpointsBaseSchema):
     pass
 
 
+class EndpointsUpdateSchema(BaseModel):
+    """
+        only name, endpoint and methods can be changed
+        project and endpoint type cant be changed once it defined
+    """
+    name: Optional[str] = None
+    endpoint: Optional[str] = None
+
+    methods: Optional[List[HttpMethods]] = None
+
+
 class EndpointsResponseSchema(EndpointsBaseSchema):
     id: BeanieObjectId
     project: Link[Project]
