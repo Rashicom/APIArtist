@@ -3,10 +3,9 @@ from typing import Optional, List, Dict, Any
 from authx.models import User
 from project.models import Project
 from pydantic import BaseModel
-from .enums import EndpointTypes
+from .enums import EndpointTypes, HttpMethods
+from .schema import StaticData
 
-class HttpMethods(BaseModel):
-    method: str
 
 class Endpoints(Document):
     """
@@ -40,7 +39,7 @@ class Endpoints(Document):
             "patch":{}
         }
     """
-    static_data: Optional[Dict[str, Any]] = None
+    static_data: Optional[StaticData] = None
 
     # dynamic endpoint, this data can be changed by put, patch and delete requests
     """
