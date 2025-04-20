@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_serializer, field_validator, AnyHttpUrl
+from pydantic import BaseModel, field_serializer, field_validator, model_validator
 from pydantic_core import PydanticCustomError
 from beanie import BeanieObjectId
 from typing import Dict, List, Any, Optional
@@ -22,12 +22,12 @@ class EndpointsBaseSchema(BaseModel):
 
     methods: List[HttpMethods]
     endpoint_type: EndpointTypes
-    static_data: StaticData
+    static_data: Optional[StaticData] = None
     dynamic_data: Optional[List[Dict[str, Any]]] = None
 
     @field_validator("endpoint", mode="before")
     @classmethod
-    def serialzie_endpoint(cls,endpoint):
+    def validate_endpoint(cls,endpoint):
         # validate for url restricted chars
         if any(char in endpoint for char in {' '}):
             raise PydanticCustomError(
@@ -36,6 +36,27 @@ class EndpointsBaseSchema(BaseModel):
             )
         # append prefix if not there
         return endpoint if endpoint.startswith("/") else f"/{endpoint}"
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_endpoint_type(cls, data):
+        print(">>>>>>>>>>>>>>>>>>>>")
+        print(data)
+        print(type(data))
+        # check the static data and dynamic data provided according to the endpoint type
+        if data.get("endpoint_type") == EndpointTypes.STATIC:
+            if not data.get("static_data"):
+                raise PydanticCustomError(
+                    "static_data",
+                    "static_data must be provided for static endpoint"
+                )
+        elif data.get("endpoint_type") == EndpointTypes.DYNAMIC:
+            if not data.get("dynamic_data"):
+                raise PydanticCustomError(
+                    "dynamic_data",
+                    "dynamic_data must be provided for dynamic endpoint"
+                )
+        return data
 
 class EndpointsRequestSchema(EndpointsBaseSchema):
     pass
