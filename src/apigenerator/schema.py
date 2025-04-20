@@ -40,9 +40,6 @@ class EndpointsBaseSchema(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def validate_endpoint_type(cls, data):
-        print(">>>>>>>>>>>>>>>>>>>>")
-        print(data)
-        print(type(data))
         # check the static data and dynamic data provided according to the endpoint type
         if data.get("endpoint_type") == EndpointTypes.STATIC:
             if not data.get("static_data"):
