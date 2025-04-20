@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Response
 from authx.auth import CurrentUser
 from .schema import EndpointsRequestSchema, EndpointsResponseSchema
 from .repository import EndpointRepository
 from project.repository import ProjectRepository
 from beanie import BeanieObjectId
+from typing import List
 
 router = APIRouter()
 
@@ -24,25 +25,28 @@ async def create_endpoint(user:CurrentUser, data:EndpointsRequestSchema):
 @router.get(
     "/list",
     summary="List all endpoint",
-    description="List all endpoints"
+    description="List all endpoints",
+    response_model=List[EndpointsResponseSchema]
 )
 async def list_endpoint(user:CurrentUser):
-    pass
+    return await EndpointRepository.list(user=user)
 
 
 @router.get(
     "/{endpoint_id}/retrieve",
     summary="Get all endpoint",
-    description="Get all endpoints"
+    description="Get all endpoints",
+    response_model=EndpointsResponseSchema
 )
 async def get_endpoint(user:CurrentUser, id: BeanieObjectId):
-    pass
+    return await EndpointRepository.get_by_id(user=user, id=id)
 
 
 @router.patch(
     "/{endpoint_id}/update",
     summary="Update endpoint",
-    description="Update endpoint"
+    description="Update endpoint",
+    response_model=EndpointsResponseSchema
 )
 async def update_endpoint(user:CurrentUser, id: BeanieObjectId):
     pass
@@ -54,5 +58,5 @@ async def update_endpoint(user:CurrentUser, id: BeanieObjectId):
     description="Delete endpoint"
 )
 async def delete_endpoint(user:CurrentUser, id: BeanieObjectId):
-    pass
-
+    await EndpointRepository.delete(user=user, id=id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
