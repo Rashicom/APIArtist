@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Response
 from authx.auth import CurrentUser
-from .schema import EndpointsRequestSchema, EndpointsResponseSchema
+from .schema import EndpointsRequestSchema, EndpointsResponseSchema, EndpointsUpdateSchema
 from .repository import EndpointRepository
 from project.repository import ProjectRepository
+from beanie import BeanieObjectId
+from typing import List
 
 router = APIRouter()
 
@@ -17,3 +19,44 @@ async def create_endpoint(user:CurrentUser, data:EndpointsRequestSchema):
     if not project_obj:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="project does not found")
     return await EndpointRepository.create(user=user, **data.model_dump())
+
+
+
+@router.get(
+    "/list",
+    summary="List all endpoint",
+    description="List all endpoints",
+    response_model=List[EndpointsResponseSchema]
+)
+async def list_endpoint(user:CurrentUser):
+    return await EndpointRepository.list(user=user)
+
+
+@router.get(
+    "/{endpoint_id}/retrieve",
+    summary="Get all endpoint",
+    description="Get all endpoints",
+    response_model=EndpointsResponseSchema
+)
+async def get_endpoint(user:CurrentUser, id: BeanieObjectId):
+    return await EndpointRepository.get_by_id(user=user, id=id)
+
+
+@router.patch(
+    "/{endpoint_id}/update",
+    summary="Update endpoint",
+    description="Update endpoint",
+    response_model=EndpointsResponseSchema
+)
+async def update_endpoint(user:CurrentUser, id: BeanieObjectId, data:EndpointsUpdateSchema):
+    return await EndpointRepository.update(user=user, id=id, data=data)
+
+
+@router.delete(
+    "/{endpoint_id}/delete",
+    summary="Delete endpoint",
+    description="Delete endpoint"
+)
+async def delete_endpoint(user:CurrentUser, id: BeanieObjectId):
+    await EndpointRepository.delete(user=user, id=id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
