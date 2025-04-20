@@ -1,4 +1,5 @@
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel, field_serializer, field_validator, AnyHttpUrl
+from pydantic_core import PydanticCustomError
 from beanie import BeanieObjectId
 from typing import Dict, List, Any, Optional
 from .enums import EndpointTypes, HttpMethods
@@ -24,6 +25,17 @@ class EndpointsBaseSchema(BaseModel):
     static_data: StaticData
     dynamic_data: Optional[List[Dict[str, Any]]] = None
 
+    @field_validator("endpoint", mode="before")
+    @classmethod
+    def serialzie_endpoint(cls,endpoint):
+        # validate for url restricted chars
+        if any(char in endpoint for char in {' '}):
+            raise PydanticCustomError(
+                "Invalied endpoint",
+                "endpoint should not contain any restricted chars"
+            )
+        # append prefix if not there
+        return endpoint if endpoint.startswith("/") else f"/{endpoint}"
 
 class EndpointsRequestSchema(EndpointsBaseSchema):
     pass
