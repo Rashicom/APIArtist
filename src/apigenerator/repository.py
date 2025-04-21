@@ -19,8 +19,8 @@ class EndpointRepository:
     async def list(user:User):
         return await Endpoints.find(Endpoints.user.id==user.id).to_list()
     
-    async def filter(user:User, *args, **kwargs):
-        return await Endpoints.find_all(kwargs).to_list()
+    async def filter_by_project(user:User, project:BeanieObjectId):
+        return await Endpoints.find(Endpoints.user.id==user.id, Endpoints.project.id==project).to_list()
     
     async def get_by_id(user:User, id:BeanieObjectId):
         return await Endpoints.find_one(Endpoints.id==id)

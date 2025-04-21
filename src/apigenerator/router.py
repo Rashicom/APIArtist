@@ -28,9 +28,10 @@ async def create_endpoint(user:CurrentUser, data:EndpointsRequestSchema):
     description="List all endpoints",
     response_model=List[EndpointsResponseSchema]
 )
-async def list_endpoint(user:CurrentUser):
+async def list_endpoint(user:CurrentUser, project_id:BeanieObjectId=None):
+    if project_id:
+        return await EndpointRepository.filter_by_project(user=user, project=project_id)
     return await EndpointRepository.list(user=user)
-
 
 @router.get(
     "/{endpoint_id}/retrieve",
