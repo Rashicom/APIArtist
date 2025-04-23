@@ -32,8 +32,10 @@ async def handle_get(user:CurrentUser, project_id:BeanieObjectId, endpoint:str):
     summary="Handle POST request",
     description="Handle POST request"
 )
-async def handle_post(project_id, endpoint:str):
-    print(">>>>",endpoint)
+async def handle_post(user:CurrentUser, project_id:BeanieObjectId, endpoint:str):
+    project = await get_project_by_id(user,project_id)
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return {"test":"Test"}
 
 
@@ -42,8 +44,10 @@ async def handle_post(project_id, endpoint:str):
     summary="Handle PATCH request",
     description="Handle PATCH request"
 )
-async def handle_patch(project_id, endpoint:str):
-    print(">>>>",endpoint)
+async def handle_patch(user:CurrentUser, project_id:BeanieObjectId, endpoint:str):
+    project = await get_project_by_id(user,project_id)
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return {"test":"Test"}
 
 
@@ -52,8 +56,10 @@ async def handle_patch(project_id, endpoint:str):
     summary="Handle PATCH request",
     description="Handle PATCH request"
 )
-async def handle_patch(project_id, endpoint:str):
-    print(">>>>",endpoint)
+async def handle_patch(user:CurrentUser, project_id:BeanieObjectId, endpoint:str):
+    project = await get_project_by_id(user,project_id)
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return {"test":"Test"}
 
 
@@ -62,8 +68,10 @@ async def handle_patch(project_id, endpoint:str):
     summary="Handle DELETE request",
     description="Handle DELETE request"
 )
-async def handle_delete(project_id, endpoint:str):
-    print(">>>>",endpoint)
+async def handle_delete(user:CurrentUser, project_id:BeanieObjectId, endpoint:str):
+    project = await get_project_by_id(user,project_id)
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return {"test":"Test"}
 
 
@@ -72,6 +80,8 @@ async def handle_delete(project_id, endpoint:str):
     summary="Handle PUT request",
     description="Handle PUT request"
 )
-async def handle_put(project_id, endpoint:str):
-    print(">>>>",endpoint)
+async def handle_put(user:CurrentUser, project_id:BeanieObjectId, endpoint:str):
+    project = await get_project_by_id(user,project_id)
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return {"test":"Test"}
