@@ -14,6 +14,7 @@ class Project(Document, TimestampMixinodel):
     Generate Base Url
     User can generate base url to create multiple endpoints under it
     """
+
     project_id: UUID4 = Field(default_factory=uuid.uuid4)
     user: Link[User]
     name: str

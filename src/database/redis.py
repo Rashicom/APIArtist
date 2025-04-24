@@ -10,7 +10,7 @@ class RedisConnection:
     def __init__(self):
         self.connection_pool = None
         self.cache = None
-    
+
     async def initialize_connection(self):
         # Initialize Redis connection
         self.connection_pool = redis.ConnectionPool(
@@ -30,15 +30,18 @@ class RedisConnection:
             raise Exception("Redis initialization Failed")
         else:
             print("Redis initialized successfully")
-    
+
     async def close_connection(self):
         if self.cache:
             await self.cache.aclose()
             print("Redis connection closed")
 
+
 redis_db = RedisConnection()
+
 
 async def get_cache():
     return redis_db.cache
+
 
 redis_cache = Annotated[redis.Redis, Depends(get_cache)]

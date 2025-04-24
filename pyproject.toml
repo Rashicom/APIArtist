@@ -17,6 +17,7 @@ google-auth-oauthlib = "^1.2.1"
 google-auth-httplib2 = "^0.2.0"
 beanie = "^1.29.0"
 pyjwt = "^2.10.1"
+pre-commit = "^4.2.0"
 
 
 [build-system]

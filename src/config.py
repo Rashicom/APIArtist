@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
+
 class Settings(BaseSettings):
     """
     Settings configuration
@@ -9,7 +10,7 @@ class Settings(BaseSettings):
     # mongodb credentials
     MONGODB_URI: str = "mongodb://localhost:27017"
     MONGODB_DB_NAME: str = "testdatabase"
-    
+
     # reids credentials
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379

@@ -5,13 +5,13 @@ services:
       - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   redis:
     image: redis:alpine
     restart: always
     ports:
       - "6379"
-  
+
   apiartist:
     build:
       context: .
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
       - redis
-  
+
   pdadmin:
     image: dpage/pgadmin4
     env_file:
@@ -37,4 +37,3 @@ services:
 
 volumes:
   postgres_data:
-  
