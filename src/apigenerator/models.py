@@ -12,12 +12,13 @@ class Endpoints(Document):
     api suffix pattern
         BASER_URL/uuid/api/<query>
     """
+
     user: Link[User]
     project: Link[Project]
 
     name: str = None
     endpoint: str
-    
+
     methods: List[HttpMethods]
 
     """
@@ -45,7 +46,7 @@ class Endpoints(Document):
     """
     This table store the data of dynamic api
     endpoints can filter and change the data(put,patch, delete)
-    
+
     records limit:
         - an endpoints can have n number of records accordint to which package they purchased
     """

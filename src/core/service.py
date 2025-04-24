@@ -5,11 +5,11 @@ from fastapi import Request
 from authx.models import User
 
 
-async def get_project_by_id(user:User,project_id: BeanieObjectId):
-    project_obj = ProjectRepository.retrieve_project(user,project_id)
+async def get_project_by_id(user: User, project_id: BeanieObjectId):
+    project_obj = ProjectRepository.retrieve_project(user, project_id)
 
 
-async def get_endpoint():
+class EndpointManager:
     """
     user:user
     endpoint:endpoint string
@@ -18,4 +18,14 @@ async def get_endpoint():
         endpoint_str = /api/user/12/change
     """
 
-    pass
+    def __init__(self, project: Project, end_point: str):
+        self.project = project
+        self.end_point_string = end_point
+        self.end_point_obj = None
+
+    async def get_end_point(self):
+        "get end point"
+        pass
+
+    async def get_available_methods(self):
+        pass

@@ -7,11 +7,12 @@ from apigenerator.models import Endpoints
 
 settings = get_settings()
 
+
 class MongoDBConnection:
     def __init__(self):
         self.client = None
         self.db = None
-    
+
     async def initialize_connection(self):
         self.client = AsyncIOMotorClient(settings.MONGODB_URI)
         self.db = self.client[settings.MONGODB_DB_NAME]
@@ -20,7 +21,7 @@ class MongoDBConnection:
         respose = await self.db.command("ping")
         if int(respose["ok"]) != 1:
             raise Exception("MongoDB initialization Failed")
-        
+
         print("MongoDB initialized successfully")
         await init_beanie(database=self.db, document_models=[User, Project, Endpoints])
         print("Beanie initialized successfully")
