@@ -5,9 +5,8 @@ from fastapi import Request
 from authx.models import User
 
 
-async def get_project_by_id(user:User,project_id: BeanieObjectId):
-    project_obj = ProjectRepository.retrieve_project(user,project_id)
-
+async def get_project_by_id(user: User, project_id: BeanieObjectId):
+    project_obj = ProjectRepository.retrieve_project(user, project_id)
 
 
 class EndpointManager:
@@ -18,7 +17,8 @@ class EndpointManager:
         endpoint_obj = /api/user/{user_id}/change
         endpoint_str = /api/user/12/change
     """
-    def __init__(self, project:Project, end_point:str):
+
+    def __init__(self, project: Project, end_point: str):
         self.project = project
         self.end_point_string = end_point
         self.end_point_obj = None

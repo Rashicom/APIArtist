@@ -14,9 +14,10 @@ class StaticData(BaseModel):
     put: Optional[Dict] = {}
     delete: Optional[Dict] = {}
 
+
 class EndpointsBaseSchema(BaseModel):
     project: BeanieObjectId
-    
+
     name: str
     endpoint: str
 
@@ -27,12 +28,11 @@ class EndpointsBaseSchema(BaseModel):
 
     @field_validator("endpoint", mode="before")
     @classmethod
-    def validate_endpoint(cls,endpoint):
+    def validate_endpoint(cls, endpoint):
         # validate for url restricted chars
-        if any(char in endpoint for char in {' '}):
+        if any(char in endpoint for char in {" "}):
             raise PydanticCustomError(
-                "Invalied endpoint",
-                "endpoint should not contain any restricted chars"
+                "Invalied endpoint", "endpoint should not contain any restricted chars"
             )
         # append prefix if not there
         return endpoint if endpoint.startswith("/") else f"/{endpoint}"
@@ -44,16 +44,15 @@ class EndpointsBaseSchema(BaseModel):
         if data.get("endpoint_type") == EndpointTypes.STATIC:
             if not data.get("static_data"):
                 raise PydanticCustomError(
-                    "static_data",
-                    "static_data must be provided for static endpoint"
+                    "static_data", "static_data must be provided for static endpoint"
                 )
         elif data.get("endpoint_type") == EndpointTypes.DYNAMIC:
             if not data.get("dynamic_data"):
                 raise PydanticCustomError(
-                    "dynamic_data",
-                    "dynamic_data must be provided for dynamic endpoint"
+                    "dynamic_data", "dynamic_data must be provided for dynamic endpoint"
                 )
         return data
+
 
 class EndpointsRequestSchema(EndpointsBaseSchema):
     pass
@@ -61,9 +60,10 @@ class EndpointsRequestSchema(EndpointsBaseSchema):
 
 class EndpointsUpdateSchema(BaseModel):
     """
-        only name, endpoint and methods can be changed
-        project and endpoint type cant be changed once it defined
+    only name, endpoint and methods can be changed
+    project and endpoint type cant be changed once it defined
     """
+
     name: Optional[str] = None
     endpoint: Optional[str] = None
 

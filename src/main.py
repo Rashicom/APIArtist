@@ -4,8 +4,10 @@ from database.mongodb import mongodb
 from database.redis import redis_db
 from api import router
 
-import os 
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+import os
+
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,8 +24,7 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/",
     redoc_url="/docs",
-
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 app.include_router(router)

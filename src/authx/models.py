@@ -15,7 +15,7 @@ class User(Document, TimestampMixinodel):
     @before_event(Update)
     async def update_time(self):
         self.updated_at = datetime.now(timezone.utc)
-    
+
     class Settings:
         collection = "users"
 
