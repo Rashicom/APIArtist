@@ -29,3 +29,45 @@ class EndpointManager:
 
     async def get_available_methods(self):
         pass
+
+    async def get_endpoint_type(self):
+        pass
+
+    async def get_data(self):
+        """
+        Return data from endpoint
+        """
+        pass
+
+    async def set_data(self):
+        pass
+
+    async def __post(self):
+        """
+        handle post
+        """
+        pass
+
+    async def __get(self):
+        """
+        handle get
+        """
+        pass
+
+    async def __patch(self):
+        """
+        handle patch
+        """
+        pass
+
+    async def __put(self):
+        """
+        handle put
+        """
+        pass
+
+    async def __delete(self):
+        """
+        handle delete
+        """
+        pass
