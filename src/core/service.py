@@ -3,6 +3,7 @@ from project.repository import ProjectRepository
 from beanie import BeanieObjectId
 from fastapi import Request
 from authx.models import User
+from typing import Dict
 
 
 async def get_project_by_id(user: User, project_id: BeanieObjectId):
@@ -53,7 +54,7 @@ class EndpointManager:
         """
         pass
 
-    async def set_data(self, method, data):
+    async def set_data(self, method: str, data: Dict):
         """
         set data to an endpoint
             - call self.__<method>
