@@ -4,6 +4,7 @@ from beanie import BeanieObjectId
 from fastapi import Request
 from authx.models import User
 from typing import Dict
+from core.repository import CoreRepository
 
 
 async def get_project_by_id(user: User, project_id: BeanieObjectId):
@@ -19,9 +20,10 @@ class EndpointManager:
         endpoint_str = /api/user/12/change
     """
 
-    def __init__(self, project: Project, end_point: str):
+    def __init__(self, user_id: User, project: Project, end_point: str):
         self.project = project
         self.end_point_string = end_point
+        self.user_id = user_id
         self.end_point_obj = None
 
     async def validate_end_point(self):
@@ -53,7 +55,10 @@ class EndpointManager:
             if not breaked
             self.endpoint_obj = obj
         """
-        pass
+        # get all endpoints in the project
+        projects = await CoreRepository.get_endpoints_by_project_id(
+            user_id=self.user_id, project_id=self.project.id
+        )
 
     async def get_available_methods(self):
         """
