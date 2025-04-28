@@ -29,6 +29,29 @@ class EndpointManager:
         Validate endpoint : check the endpoint is exist in db or not
             - if yes set self.end_point_obj
             - else rise http exception
+
+        Validation logic
+            Eg:
+                endpoint : api/user/{user_id}/get
+                target1  : api/user/4/get
+                target2  : api/user/john/get
+                result   : match
+        1 - break into chunks
+            Eg:
+                api/user/4/get >> [api,user,4,get]
+        2 - find records which have same number of chunks
+        3 - iterate through endpoit records
+            - iterage thorugh record endpoint chunks
+            each iter all the below checks needs to be performed
+            - if type(endpoint_chunk[n]) == {}:
+                pass
+            - elif endpoint_chunk[n] == target_chunk[n]:
+                pass
+            - else:
+                break
+
+            if not breaked
+            self.endpoint_obj = obj
         """
         pass
 
