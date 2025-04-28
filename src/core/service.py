@@ -56,7 +56,7 @@ class EndpointManager:
             self.endpoint_obj = obj
         """
         # get all endpoints in the project
-        projects = await CoreRepository.get_endpoints_by_project_id(
+        endpoints = await CoreRepository.get_endpoints_by_project_id(
             user_id=self.user_id, project_id=self.project.id
         )
 
