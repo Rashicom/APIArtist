@@ -15,8 +15,8 @@ class CoreRepository:
             Endpoints.user.id == user_id, Endpoints.project.id == project_id
         ).to_list()
 
-    async def get_endpoint_by_id(self):
+    async def get_endpoint_by_id(self, endpoint_id: BeanieObjectId):
         """
         return endpoint of a endpoint_id
         """
-        pass
+        return await Endpoints.find_one(Endpoints.id == endpoint_id)
