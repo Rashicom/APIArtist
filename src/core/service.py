@@ -44,7 +44,7 @@ class EndpointManager:
         2 - find records which have same number of chunks
         3 - iterate through endpoit records
             - iterage thorugh record endpoint chunks
-            each iter all the below checks needs to be performed
+            for each iter, all the below checks needs to be performed
             - if type(endpoint_chunk[n]) == {}:
                 pass
             - elif endpoint_chunk[n] == target_chunk[n]:
@@ -59,6 +59,17 @@ class EndpointManager:
         endpoints = await CoreRepository.get_endpoints_by_project_id(
             user_id=self.user_id, project_id=self.project.id
         )
+
+        target_endpoint_chunks = self.end_point_string.split("/")
+        # iterate through each endpoint
+        for endpoint_obj in endpoints:
+            endpoint_chunks = endpoint_obj.endpoint.split("/")
+
+            # chunks len must be equal. else pass to next iteration
+            if len(endpoint_chunks) != len(target_endpoint_chunks):
+                continue
+
+            # iterate througn chunks
 
     async def get_available_methods(self):
         """
