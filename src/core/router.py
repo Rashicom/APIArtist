@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from .service import get_project_by_id
 from beanie import BeanieObjectId
 from authx.auth import CurrentUser
-from .service import get_project_by_id
+from .service import get_project_by_id, EndpointManager
 from fastapi import HTTPException, status
 
 router = APIRouter()
@@ -26,6 +26,8 @@ async def handle_get(user: CurrentUser, project_id: BeanieObjectId, endpoint: st
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    endpoint_manager = EndpointManager(user, project, endpoint)
+    await endpoint_manager.validate_end_point()
 
     return {"test": "Test"}
 
