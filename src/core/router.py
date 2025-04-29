@@ -32,7 +32,7 @@ async def handle_get(project_id: BeanieObjectId, endpoint: str):
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    print(end_point_obj)
+
     return {"test": "Test"}
 
 
@@ -48,6 +48,10 @@ async def handle_post(project_id: BeanieObjectId, endpoint: str):
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
     user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -63,6 +67,10 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
     user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -78,6 +86,10 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
     user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -93,6 +105,10 @@ async def handle_delete(project_id: BeanieObjectId, endpoint: str):
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
     user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -108,4 +124,8 @@ async def handle_put(project_id: BeanieObjectId, endpoint: str):
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
     user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
