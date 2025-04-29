@@ -20,10 +20,10 @@ class EndpointManager:
         endpoint_str = /api/user/12/change
     """
 
-    def __init__(self, user_id: User, project: Project, end_point: str):
+    def __init__(self, user: User, project: Project, end_point: str):
         self.project = project
         self.end_point_string = end_point
-        self.user_id = user_id
+        self.user = user
         self.end_point_obj = None
 
     async def validate_end_point(self):
@@ -57,7 +57,7 @@ class EndpointManager:
         """
         # get all endpoints in the project
         endpoints = await CoreRepository.get_endpoints_by_project_id(
-            user_id=self.user_id, project_id=self.project.id
+            user_id=self.user.id, project_id=self.project.id
         )
 
         # stripe url, then split by slash
