@@ -3,6 +3,7 @@ from authx.models import User
 from beanie import BeanieObjectId
 from .schema import ProjectUpdateSchema
 from fastapi import HTTPException, status
+import uuid
 
 
 class ProjectRepository:
@@ -14,6 +15,9 @@ class ProjectRepository:
 
     async def retrieve_project(user: User, id: BeanieObjectId):
         return await Project.find_one(Project.user.id == user.id, Project.id == id)
+
+    async def retrieve_project_by_id(project_id: uuid):
+        return await Project.find_one(Project.project_id == project_id)
 
     async def delete_project(user: User, id: str):
         proj_obj = await Project.find_one(
