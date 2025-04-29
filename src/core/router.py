@@ -31,7 +31,7 @@ async def handle_get(project_id: BeanieObjectId, endpoint: str):
     endpoint_manager = EndpointManager(user, project, endpoint)
 
     # rise 404 http exception if not found
-    end_point_obj = await endpoint_manager.validate_end_point()
+    end_point_obj = await endpoint_manager.resolve_end_point()
     print(end_point_obj)
     return {"test": "Test"}
 

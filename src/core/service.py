@@ -26,9 +26,9 @@ class EndpointManager:
         self.user = user
         self.end_point_obj = None
 
-    async def validate_end_point(self):
+    async def resolve_end_point(self):
         """
-        Validate endpoint : check the endpoint is exist in db or not
+        resolve endpoint : check the endpoint is exist in db or not
             - if yes set self.end_point_obj
             - else rise http exception
 
