@@ -5,11 +5,10 @@ from fastapi import Request, HTTPException, status
 from authx.models import User
 from typing import Dict
 from core.repository import CoreRepository
-import uuid
 
 
-async def get_project_by_id(project_id: uuid):
-    project_obj = ProjectRepository.retrieve_project_by_id(project_id)
+async def get_project_by_id(project_id: BeanieObjectId):
+    return await ProjectRepository.retrieve_project_by_id(project_id)
 
 
 class EndpointManager:

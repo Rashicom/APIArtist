@@ -4,6 +4,7 @@ from beanie import BeanieObjectId
 from authx.auth import CurrentUser
 from .service import get_project_by_id, EndpointManager
 from fastapi import HTTPException, status
+from pydantic import UUID4
 
 router = APIRouter()
 
@@ -21,14 +22,14 @@ Request handlers
     description="Handle GET request",
 )
 async def handle_get(project_id: BeanieObjectId, endpoint: str):
+    print(project_id)
     project = await get_project_by_id(project_id)
-    user = project.user
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
-    endpoint_manager = EndpointManager(user, project, endpoint)
-    await endpoint_manager.validate_end_point()
+    # endpoint_manager = EndpointManager(user, project, endpoint)
+    # await endpoint_manager.validate_end_point()
 
     return {"test": "Test"}
 

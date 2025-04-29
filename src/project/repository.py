@@ -16,8 +16,11 @@ class ProjectRepository:
     async def retrieve_project(user: User, id: BeanieObjectId):
         return await Project.find_one(Project.user.id == user.id, Project.id == id)
 
-    async def retrieve_project_by_id(project_id: uuid):
-        return await Project.find_one(Project.project_id == project_id)
+    async def retrieve_project_by_id(id: BeanieObjectId):
+        project = await Project.find_one(Project.id == id)
+        if project:
+            await project.fetch_link(Project.user)
+        return project
 
     async def delete_project(user: User, id: str):
         proj_obj = await Project.find_one(
