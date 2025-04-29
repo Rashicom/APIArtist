@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from .service import get_project_by_id
 from beanie import BeanieObjectId
 from authx.auth import CurrentUser
@@ -21,7 +21,7 @@ Request handlers
     summary="Handle GET request",
     description="Handle GET request",
 )
-async def handle_get(project_id: BeanieObjectId, endpoint: str):
+async def handle_get(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -33,6 +33,11 @@ async def handle_get(project_id: BeanieObjectId, endpoint: str):
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
 
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    print(data)
     return {"test": "Test"}
 
 
