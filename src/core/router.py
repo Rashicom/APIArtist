@@ -22,7 +22,6 @@ Request handlers
     description="Handle GET request",
 )
 async def handle_get(project_id: BeanieObjectId, endpoint: str):
-    print(project_id)
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -41,11 +40,11 @@ async def handle_get(project_id: BeanieObjectId, endpoint: str):
 )
 async def handle_post(project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
-    user = project.user
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
     return {"test": "Test"}
 
 
@@ -56,11 +55,11 @@ async def handle_post(project_id: BeanieObjectId, endpoint: str):
 )
 async def handle_patch(project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
-    user = project.user
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
     return {"test": "Test"}
 
 
@@ -71,11 +70,11 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
 )
 async def handle_patch(project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
-    user = project.user
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
     return {"test": "Test"}
 
 
@@ -86,11 +85,11 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
 )
 async def handle_delete(project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
-    user = project.user
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
     return {"test": "Test"}
 
 
@@ -101,9 +100,9 @@ async def handle_delete(project_id: BeanieObjectId, endpoint: str):
 )
 async def handle_put(project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
-    user = project.user
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
     return {"test": "Test"}
