@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends
 from .service import get_project_by_id
 from beanie import BeanieObjectId
 from authx.auth import CurrentUser
-from .service import get_project_by_id
+from .service import get_project_by_id, EndpointManager
 from fastapi import HTTPException, status
+from pydantic import UUID4
 
 router = APIRouter()
 
@@ -20,12 +21,17 @@ Request handlers
     summary="Handle GET request",
     description="Handle GET request",
 )
-async def handle_get(user: CurrentUser, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(user, project_id)
+async def handle_get(project_id: BeanieObjectId, endpoint: str):
+    project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
 
     return {"test": "Test"}
 
@@ -35,12 +41,17 @@ async def handle_get(user: CurrentUser, project_id: BeanieObjectId, endpoint: st
     summary="Handle POST request",
     description="Handle POST request",
 )
-async def handle_post(user: CurrentUser, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(user, project_id)
+async def handle_post(project_id: BeanieObjectId, endpoint: str):
+    project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -49,12 +60,17 @@ async def handle_post(user: CurrentUser, project_id: BeanieObjectId, endpoint: s
     summary="Handle PATCH request",
     description="Handle PATCH request",
 )
-async def handle_patch(user: CurrentUser, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(user, project_id)
+async def handle_patch(project_id: BeanieObjectId, endpoint: str):
+    project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -63,12 +79,17 @@ async def handle_patch(user: CurrentUser, project_id: BeanieObjectId, endpoint: 
     summary="Handle PATCH request",
     description="Handle PATCH request",
 )
-async def handle_patch(user: CurrentUser, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(user, project_id)
+async def handle_patch(project_id: BeanieObjectId, endpoint: str):
+    project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -77,12 +98,17 @@ async def handle_patch(user: CurrentUser, project_id: BeanieObjectId, endpoint: 
     summary="Handle DELETE request",
     description="Handle DELETE request",
 )
-async def handle_delete(user: CurrentUser, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(user, project_id)
+async def handle_delete(project_id: BeanieObjectId, endpoint: str):
+    project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
 
 
@@ -91,10 +117,15 @@ async def handle_delete(user: CurrentUser, project_id: BeanieObjectId, endpoint:
     summary="Handle PUT request",
     description="Handle PUT request",
 )
-async def handle_put(user: CurrentUser, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(user, project_id)
+async def handle_put(project_id: BeanieObjectId, endpoint: str):
+    project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
+    user = project.user
+    endpoint_manager = EndpointManager(user, project, endpoint)
+
+    # rise 404 http exception if not found
+    end_point_obj = await endpoint_manager.resolve_end_point()
     return {"test": "Test"}
