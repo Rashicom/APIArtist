@@ -1,7 +1,7 @@
 from project.models import Project
 from project.repository import ProjectRepository
 from beanie import BeanieObjectId
-from fastapi import Request
+from fastapi import Request, HTTPException, status
 from authx.models import User
 from typing import Dict
 from core.repository import CoreRepository
@@ -60,16 +60,47 @@ class EndpointManager:
             user_id=self.user_id, project_id=self.project.id
         )
 
-        target_endpoint_chunks = self.end_point_string.split("/")
+        # stripe url, then split by slash
+        # strie("/") remove prefix and suffix slashes
+        target_endpoint_chunks = self.end_point_string.strip("/").split("/")
+
         # iterate through each endpoint
         for endpoint_obj in endpoints:
-            endpoint_chunks = endpoint_obj.endpoint.split("/")
+
+            # stripe("/") remove prefix and suffix slashes
+            endpoint_chunks = endpoint_obj.endpoint.strip("/").split("/")
 
             # chunks len must be equal. else pass to next iteration
             if len(endpoint_chunks) != len(target_endpoint_chunks):
                 continue
 
+            # assuming this target_endpoint is matched
+            # this status changed from the for loop if not matched
+            is_match = True
+
             # iterate througn chunks
+            for i in range(len(target_endpoint_chunks)):
+                # continue to next chunk if var
+                if endpoint_chunks[i][0] == "{":
+                    continue
+                # continue to next chunk if match
+                elif endpoint_chunks[i] == target_endpoint_chunks[i]:
+                    continue
+
+                # terminate this iteration if not match any one the condition
+                else:
+                    is_match = False
+                    break
+
+            # if end_point_obj found, set in self and stop iteration
+            if is_match:
+                self.end_point_obj = endpoint_obj
+                break
+        if not self.end_point_obj:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="path not found"
+            )
+        return self.end_point_obj
 
     async def get_available_methods(self):
         """
