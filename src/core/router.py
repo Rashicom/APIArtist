@@ -80,7 +80,12 @@ async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: s
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.patch(
@@ -99,7 +104,12 @@ async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: s
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.delete(
@@ -118,7 +128,12 @@ async def handle_delete(request: Request, project_id: BeanieObjectId, endpoint: 
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.put(
@@ -137,4 +152,9 @@ async def handle_put(request: Request, project_id: BeanieObjectId, endpoint: str
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
