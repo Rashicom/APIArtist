@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from .service import get_project_by_id
 from beanie import BeanieObjectId
 from authx.auth import CurrentUser
@@ -21,7 +21,7 @@ Request handlers
     summary="Handle GET request",
     description="Handle GET request",
 )
-async def handle_get(project_id: BeanieObjectId, endpoint: str):
+async def handle_get(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -33,7 +33,11 @@ async def handle_get(project_id: BeanieObjectId, endpoint: str):
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
 
-    return {"test": "Test"}
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.post(
@@ -41,7 +45,7 @@ async def handle_get(project_id: BeanieObjectId, endpoint: str):
     summary="Handle POST request",
     description="Handle POST request",
 )
-async def handle_post(project_id: BeanieObjectId, endpoint: str):
+async def handle_post(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -52,7 +56,12 @@ async def handle_post(project_id: BeanieObjectId, endpoint: str):
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.patch(
@@ -60,7 +69,7 @@ async def handle_post(project_id: BeanieObjectId, endpoint: str):
     summary="Handle PATCH request",
     description="Handle PATCH request",
 )
-async def handle_patch(project_id: BeanieObjectId, endpoint: str):
+async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -71,7 +80,12 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.patch(
@@ -79,7 +93,7 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
     summary="Handle PATCH request",
     description="Handle PATCH request",
 )
-async def handle_patch(project_id: BeanieObjectId, endpoint: str):
+async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -90,7 +104,12 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.delete(
@@ -98,7 +117,7 @@ async def handle_patch(project_id: BeanieObjectId, endpoint: str):
     summary="Handle DELETE request",
     description="Handle DELETE request",
 )
-async def handle_delete(project_id: BeanieObjectId, endpoint: str):
+async def handle_delete(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -109,7 +128,12 @@ async def handle_delete(project_id: BeanieObjectId, endpoint: str):
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data
 
 
 @router.put(
@@ -117,7 +141,7 @@ async def handle_delete(project_id: BeanieObjectId, endpoint: str):
     summary="Handle PUT request",
     description="Handle PUT request",
 )
-async def handle_put(project_id: BeanieObjectId, endpoint: str):
+async def handle_put(request: Request, project_id: BeanieObjectId, endpoint: str):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -128,4 +152,9 @@ async def handle_put(project_id: BeanieObjectId, endpoint: str):
 
     # rise 404 http exception if not found
     end_point_obj = await endpoint_manager.resolve_end_point()
-    return {"test": "Test"}
+
+    # automatically raise method not found(405) if method is not there
+    method = await endpoint_manager.resolve_methods(request.method)
+
+    data = await endpoint_manager.get_data()
+    return data

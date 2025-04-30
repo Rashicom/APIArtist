@@ -5,6 +5,7 @@ from fastapi import Request, HTTPException, status
 from authx.models import User
 from typing import Dict
 from core.repository import CoreRepository
+from apigenerator.enums import HttpMethods, EndpointTypes
 
 
 async def get_project_by_id(project_id: BeanieObjectId):
@@ -25,6 +26,7 @@ class EndpointManager:
         self.end_point_string = end_point
         self.user = user
         self.end_point_obj = None
+        self.method = None
 
     async def resolve_end_point(self):
         """
@@ -102,19 +104,26 @@ class EndpointManager:
             )
         return self.end_point_obj
 
-    async def get_available_methods(self):
+    async def resolve_methods(self, target_method):
         """
-        Get all avalable method for the self.end_point_obj
-            - dependency >> validate_end_point must be called before this
+        check the target_method is available in this endpoint
+        - if yes set in self.method
+        - this method is used to call appropriate action(__get, __post, __patch, __delete)
+        dependency >> validate_end_point must be called before this
         """
-        pass
+        if HttpMethods(target_method) in self.end_point_obj.methods:
+            self.method = target_method
+            return self.method
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="Method not allowed"
+        )
 
     async def get_endpoint_type(self):
         """
         Get endpoit type(static, dynamic)
             - dependency >> validate_end_point must be called before this
         """
-        pass
+        return self.end_point_obj.endpoint_type
 
     async def get_data(self):
         """
@@ -122,7 +131,12 @@ class EndpointManager:
             - call self.__get
             - dependency >> validate_end_point must be called before this
         """
-        pass
+        end_point_type = await self.get_endpoint_type()
+        if end_point_type == EndpointTypes.STATIC:
+            print("static buisiness logic")
+            return await self.__get()
+        else:
+            print("dynamic buisiness logic")
 
     async def set_data(self, method: str, data: Dict):
         """
@@ -136,28 +150,42 @@ class EndpointManager:
         """
         handle post
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
 
     async def __get(self):
         """
         handle get
         """
-        pass
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        return self.end_point_obj.dynamic_data
 
     async def __patch(self):
         """
         handle patch
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
 
     async def __put(self):
         """
         handle put
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
 
     async def __delete(self):
         """
         handle delete
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
