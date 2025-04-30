@@ -157,16 +157,7 @@ class EndpointManager:
         handle get
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
-            if self.method == "GET":
-                return self.end_point_obj.static_data.get
-            elif self.method == "POST":
-                return self.end_point_obj.static_data.post
-            elif self.method == "PATCH":
-                return self.end_point_obj.static_data.patch
-            elif self.method == "PUT":
-                return self.end_point_obj.static_data.put
-            elif self.method == "DELETE":
-                return self.end_point_obj.static_data.delte
+            return getattr(self.end_point_obj.static_data, self.method.lower())
         return self.end_point_obj.dynamic_data
 
     async def __patch(self):
