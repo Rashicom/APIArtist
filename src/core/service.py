@@ -150,6 +150,9 @@ class EndpointManager:
         """
         handle post
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
 
     async def __get(self):
@@ -164,16 +167,25 @@ class EndpointManager:
         """
         handle patch
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
 
     async def __put(self):
         """
         handle put
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
 
     async def __delete(self):
         """
         handle delete
         """
+        if await self.get_endpoint_type() == EndpointTypes.STATIC:
+            return getattr(self.end_point_obj.static_data, self.method.lower())
+        # TODO: handle dynamic operation
         pass
