@@ -18,7 +18,6 @@ class ProjectUpdateSchema(ProjectBaseSchema):
 
 class ProjectResponseSchema(ProjectRequestSchema):
     id: BeanieObjectId
-    project_id: UUID4
     base_url: str
     created_at: datetime
     updated_at: datetime
