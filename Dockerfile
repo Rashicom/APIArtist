@@ -1,6 +1,7 @@
 FROM python:3.11-alpine3.20
 
 WORKDIR /code
+ENV PYTHONPATH=/code/src
 
 RUN apk add --no-cache gcc musl-dev python3-dev libffi-dev postgresql-dev
 RUN apk update && apk add bash
