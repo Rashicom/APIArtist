@@ -1,5 +1,5 @@
 from utils.models import TimestampMixinodel
-from beanie import Document, before_event, Insert, Link
+from beanie import Document, before_event, after_event, Insert, Link, Replace
 from pydantic import Field, EmailStr, UUID4
 import uuid
 from config import get_settings
@@ -20,7 +20,8 @@ class Project(Document, TimestampMixinodel):
     name: str
     base_url: Optional[str] = None
 
-    @before_event(Insert)
-    def generate_base_url(self):
+    @after_event(Insert)
+    async def generate_base_url(self):
         if not self.base_url:
-            self.base_url = f"{settings.BASE_URL}/{self.project_id}/api"
+            self.base_url = f"{settings.BASE_URL}/{self.id}/api"
+            await self.save()
