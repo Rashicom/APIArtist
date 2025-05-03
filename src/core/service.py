@@ -137,6 +137,7 @@ class EndpointManager:
             return await self.__get()
         else:
             print("dynamic buisiness logic")
+            # TODO: impliment dynamic logic
 
     async def set_data(self, method: str, data: Dict):
         """
@@ -161,7 +162,8 @@ class EndpointManager:
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        return self.end_point_obj.dynamic_data
+        # TODO: handle dynamic operation
+        pass
 
     async def __patch(self):
         """

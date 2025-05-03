@@ -50,7 +50,7 @@ class Endpoints(Document):
     records limit:
         - an endpoints can have n number of records accordint to which package they purchased
     """
-    dynamic_data: Optional[List[Dict]] = None
+    # dynamic_data: Optional[List[Dict]] = None
 
 
 class DynamicData(Document):

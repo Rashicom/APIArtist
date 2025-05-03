@@ -26,7 +26,6 @@ class EndpointsBaseSchema(BaseModel):
     methods: List[HttpMethods]
     endpoint_type: EndpointTypes
     static_data: Optional[StaticData] = None
-    dynamic_data: Optional[List[Dict[str, Any]]] = None
 
     @field_validator("endpoint", mode="before")
     @classmethod
@@ -73,7 +72,7 @@ class EndpointsBaseSchema(BaseModel):
 
 
 class EndpointsRequestSchema(EndpointsBaseSchema):
-    pass
+    dynamic_data: Optional[List[Dict[str, Any]]] = None
 
 
 class EndpointsUpdateSchema(BaseModel):
