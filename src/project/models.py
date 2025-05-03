@@ -1,5 +1,5 @@
 from utils.models import TimestampMixinodel
-from beanie import Document, before_event, after_event, Insert, Link, Replace
+from beanie import Document, before_event, after_event, Insert, Link, Replace, Delete
 from pydantic import Field, EmailStr, UUID4
 import uuid
 from config import get_settings
