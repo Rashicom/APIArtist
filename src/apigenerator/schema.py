@@ -1,14 +1,16 @@
 from pydantic import BaseModel, field_serializer, field_validator, model_validator
 from pydantic_core import PydanticCustomError
 from beanie import BeanieObjectId
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 from .enums import EndpointTypes, HttpMethods
 from beanie import Link
 from project.models import Project
 
 
 class StaticData(BaseModel):
-    get: Optional[Dict] = {}
+    get: Optional[
+        Union[Dict, List[Dict]]
+    ] = {}  # get data can be a dict or list of dicts
     post: Optional[Dict] = {}
     patch: Optional[Dict] = {}
     put: Optional[Dict] = {}
@@ -50,6 +52,22 @@ class EndpointsBaseSchema(BaseModel):
             if not data.get("dynamic_data"):
                 raise PydanticCustomError(
                     "dynamic_data", "dynamic_data must be provided for dynamic endpoint"
+                )
+        return data
+
+    @field_validator("static_data", mode="after")
+    @classmethod
+    def validate_static_data(cls, data):
+
+        # validation only performed if data is not null
+        if not data:
+            return data
+
+        # restrict get lenght if get data a list
+        if isinstance(data.get, list):
+            if len(data.get) > 5:
+                raise PydanticCustomError(
+                    "static_data", "get data should not exceede 5 objects"
                 )
         return data
 
