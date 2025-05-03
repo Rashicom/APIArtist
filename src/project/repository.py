@@ -30,6 +30,7 @@ class ProjectRepository:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="project not found"
             )
+        await proj_obj.delete()
         return proj_obj
 
     async def update_project(user: User, id: BeanieObjectId, data: ProjectUpdateSchema):
