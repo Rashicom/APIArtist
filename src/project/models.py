@@ -24,3 +24,10 @@ class Project(Document, TimestampMixinodel):
         if not self.base_url:
             self.base_url = f"{settings.BASE_URL}/{self.id}/api"
             await self.save()
+
+    # delete all related endpoints
+    @before_event(Delete)
+    async def cascade_delete_endpoints(self):
+        from apigenerator.models import Endpoints
+
+        await Endpoints.find(Endpoints.project.id == self.id).delete()
