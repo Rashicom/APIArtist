@@ -51,3 +51,8 @@ class Endpoints(Document):
         - an endpoints can have n number of records accordint to which package they purchased
     """
     dynamic_data: Optional[List[Dict]] = None
+
+
+class DynamicData(Document):
+    endpoint: Link[Endpoints]
+    data: Optional[List[Dict]] = None
