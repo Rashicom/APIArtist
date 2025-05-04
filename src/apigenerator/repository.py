@@ -1,7 +1,7 @@
 from .models import Endpoints, DynamicData
 from authx.models import User
 from beanie import BeanieObjectId
-from typing import Dict
+from typing import Dict, List
 from fastapi import HTTPException, status
 from .schema import EndpointsUpdateSchema
 
@@ -59,5 +59,15 @@ class DynamicDataRepository:
             return dynamic_data_obj
         except Exception as e:
             print("Exception while create dynamic data")
+            return None
+            # TODO: logging
+
+    async def bulk_create(data_list: List[Dict]):
+        try:
+            dynamic_data_objs = [DynamicData(**data) for data in data_list]
+            await DynamicData.insert_many(dynamic_data_objs)
+            return dynamic_data_objs
+        except Exception as e:
+            print("Exception while bulk create dynamic data")
             return None
             # TODO: logging

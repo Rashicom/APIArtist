@@ -31,8 +31,10 @@ async def create_endpoint(user: CurrentUser, data: EndpointsRequestSchema):
 
     # update dynamic data collection if endpoint type is dynamic
     if endpoint_obj.endpoint_type == EndpointTypes.DYNAMIC:
-        dynamic_data_obj = await DynamicDataRepository.create(
-            endpoint=endpoint_obj, data=data.dynamic_data
+        dynamic_data_obj = await DynamicDataRepository.bulk_create(
+            data_list=[
+                {"endpoint": endpoint_obj, "data": dt} for dt in data.dynamic_data
+            ]
         )
     return endpoint_obj
 
