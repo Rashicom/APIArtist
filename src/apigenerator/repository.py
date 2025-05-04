@@ -40,7 +40,7 @@ class EndpointRepository:
         return endpoint_obj
 
     async def delete(user: User, id: BeanieObjectId):
-        endpoint_obj = Endpoints.find_one(
+        endpoint_obj = await Endpoints.find_one(
             Endpoints.user.id == user.id, Endpoints.id == id
         )
         if not endpoint_obj:

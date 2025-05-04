@@ -1,4 +1,4 @@
-from beanie import Document, Link
+from beanie import Document, Link, before_event, Delete
 from typing import Optional, List, Dict, Any
 from authx.models import User
 from project.models import Project
@@ -41,6 +41,14 @@ class Endpoints(Document):
         }
     """
     static_data: Optional[StaticData] = None
+
+    @before_event(Delete)
+    async def cascade_delete_dynamic_data(self):
+        print(">>>>> delete acoited")
+        # deleted associated dymanic data if endpoint_type is dynamic
+        if self.endpoint_type == EndpointTypes.DYNAMIC:
+            yy = await DynamicData.find(DynamicData.endpoint.id == self.id).delete()
+            print(">>>", yy)
 
 
 class DynamicData(Document):
