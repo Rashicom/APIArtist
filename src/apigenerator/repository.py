@@ -1,4 +1,4 @@
-from .models import Endpoints
+from .models import Endpoints, DynamicData
 from authx.models import User
 from beanie import BeanieObjectId
 from typing import Dict
@@ -49,3 +49,15 @@ class EndpointRepository:
                 detail="endpoint does not exist",
             )
         await endpoint_obj.delete()
+
+
+class DynamicDataRepository:
+    async def create(*args, **kwargs):
+        try:
+            dynamic_data_obj = DynamicData(**kwargs)
+            await dynamic_data_obj.insert()
+            return dynamic_data_obj
+        except Exception as e:
+            print("Exception while create dynamic data")
+            return None
+            # TODO: logging

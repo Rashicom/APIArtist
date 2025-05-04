@@ -2,7 +2,7 @@ from beanie import Document, Link
 from typing import Optional, List, Dict, Any
 from authx.models import User
 from project.models import Project
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .enums import EndpointTypes, HttpMethods
 from .schema import StaticData
 
@@ -55,4 +55,4 @@ class Endpoints(Document):
 
 class DynamicData(Document):
     endpoint: Link[Endpoints]
-    data: Optional[List[Dict]] = None
+    data: List[Dict] = Field(default_factory=list)
