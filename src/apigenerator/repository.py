@@ -72,3 +72,6 @@ class DynamicDataRepository:
             print("Exception while bulk create dynamic data")
             return None
             # TODO: logging
+
+    async def list(endpoint_id: BeanieObjectId):
+        return await DynamicData.find(DynamicData.endpoint.id == endpoint_id).to_list()

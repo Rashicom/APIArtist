@@ -166,8 +166,11 @@ class EndpointManager:
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: get data from dynamic data collection
-        pass
+
+        dynamic_data_obj = await DynamicDataRepository.list(self.end_point_obj.id)
+
+        # returning datas from dynamic_data objs
+        return [dt.data for dt in dynamic_data_obj]
 
     async def patch(self):
         """
