@@ -42,17 +42,26 @@ class Endpoints(Document):
     """
     static_data: Optional[StaticData] = None
 
-    # dynamic endpoint, this data can be changed by put, patch and delete requests
+
+class DynamicData(Document):
     """
     This table store the data of dynamic api
     endpoints can filter and change the data(put,patch, delete)
 
     records limit:
         - an endpoints can have n number of records accordint to which package they purchased
+
+    data : -
+        - data is considred as a row in table
+        - each data post create a object in this collection
+
+    WARNING : as data grows this collection size can grow to critical
+    SOLUTION TODO:
+        - make data as a List[Dict] and restrict size of list to a appropreate len wich size less than mondodb max value size
+        - one the max limit of one object reached save other data in a new record
+        - while retrieving/operation data, aggrage all data then perform
+
     """
-    # dynamic_data: Optional[List[Dict]] = None
 
-
-class DynamicData(Document):
     endpoint: Link[Endpoints]
-    data: List[Dict] = Field(default_factory=list)
+    data: Dict = Field(default_factory=Dict)
