@@ -64,4 +64,4 @@ class DynamicData(Document):
     """
 
     endpoint: Link[Endpoints]
-    data: Dict = Field(default_factory=Dict)
+    data: dict = Field(default_factory=dict)

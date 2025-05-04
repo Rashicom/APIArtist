@@ -58,6 +58,7 @@ class DynamicDataRepository:
             await dynamic_data_obj.insert()
             return dynamic_data_obj
         except Exception as e:
+            print(e)
             print("Exception while create dynamic data")
             return None
             # TODO: logging

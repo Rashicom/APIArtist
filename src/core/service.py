@@ -6,6 +6,7 @@ from authx.models import User
 from typing import Dict
 from core.repository import CoreRepository
 from apigenerator.enums import HttpMethods, EndpointTypes
+from apigenerator.repository import DynamicDataRepository
 
 
 async def get_project_by_id(project_id: BeanieObjectId):
@@ -22,9 +23,9 @@ class EndpointManager:
     """
 
     def __init__(self, user: User, project: Project, end_point: str):
+        self.user = user
         self.project = project
         self.end_point_string = end_point
-        self.user = user
         self.end_point_obj = None
         self.method = None
 
@@ -134,9 +135,9 @@ class EndpointManager:
         end_point_type = await self.get_endpoint_type()
         if end_point_type == EndpointTypes.STATIC:
             print("static buisiness logic")
-            return await self.__get()
+            return await self.get()
         else:
-            print("dynamic buisiness logic")
+            pass
             # TODO: impliment dynamic logic
 
     async def set_data(self, method: str, data: Dict):
@@ -147,47 +148,50 @@ class EndpointManager:
         """
         pass
 
-    async def __post(self):
+    async def post(self, data: Dict = None):
         """
         handle post
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
-        pass
 
-    async def __get(self):
+        dynamic_data_obj = await DynamicDataRepository.create(
+            endpoint=self.end_point_obj, data=data
+        )
+        return dynamic_data_obj.data
+
+    async def get(self):
         """
         handle get
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
+        # TODO: get data from dynamic data collection
         pass
 
-    async def __patch(self):
+    async def patch(self):
         """
         handle patch
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
+        # TODO: chage perticular dynamic data collection
         pass
 
-    async def __put(self):
+    async def put(self):
         """
         handle put
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
+        # TODO: change dynamic data collection
         pass
 
-    async def __delete(self):
+    async def delete(self):
         """
         handle delete
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
+        # TODO: delete a perticular dynamic data collection
         pass
