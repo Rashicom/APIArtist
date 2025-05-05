@@ -41,6 +41,11 @@ class EndpointsBaseSchema(BaseModel):
             raise PydanticCustomError(
                 "Invalied endpoint", "endpoint should not contain any restricted chars"
             )
+        if any(char in endpoint for char in {"?"}):
+            raise PydanticCustomError(
+                "Invalied endpoint",
+                "endpoint should not contain query parameter expressions whire register",
+            )
         # append prefix if not there
         return endpoint if endpoint.startswith("/") else f"/{endpoint}"
 
