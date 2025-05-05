@@ -122,7 +122,7 @@ class EndpointManager:
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="Method not allowed"
         )
 
-    async def load_path_parameters(self):
+    async def _load_path_parameters(self):
         """
         Retrieve path parameters from url
         store in class var as a dict named as self.path_parameters
@@ -142,8 +142,9 @@ class EndpointManager:
                 self.path_parameters.update(
                     {endpoint_chunks[i].strip("{}"): url_path_chunks[i]}
                 )
+        return self.path_parameters
 
-    async def load_query_parameters(self):
+    async def _load_query_parameters(self):
         """
         Retrieve query parameters from url
         store in class var as a dict named as self.query_parameters
@@ -159,6 +160,17 @@ class EndpointManager:
             if "=" in chunk:
                 key, val = chunk.split("=")
                 self.query_parameters.update({key: val})
+        return self.query_parameters
+
+    async def get_query_params(self):
+        if not self.query_parameters:
+            await self._load_query_parameters()
+        return self.query_parameters
+
+    async def get_path_params(self):
+        if not self.path_parameters:
+            await self._load_path_parameters()
+        return self.path_parameters
 
     async def get_endpoint_type(self):
         """
@@ -193,9 +205,12 @@ class EndpointManager:
         """
         handle post
         """
+
+        # if static endpoint return specified data
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
 
+        # else perform post operation
         dynamic_data_obj = await DynamicDataRepository.create(
             endpoint=self.end_point_obj, data=data
         )
@@ -205,22 +220,41 @@ class EndpointManager:
         """
         handle get
         """
+
+        # if static endpoint return specified data
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
 
+        # else perform get from dynamic data
         dynamic_data_obj = await DynamicDataRepository.list(self.end_point_obj.id)
 
         # returning datas from dynamic_data objs
         return [dt.data for dt in dynamic_data_obj]
 
-    async def patch(self):
+    async def patch(self, data: Dict = None):
         """
         handle patch
+            - filter data which needs to be patched
+            - fetch data from path params
         """
+        # if static endpoint return specified response
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: chage perticular dynamic data collection
-        pass
+
+        filter_params = await self.get_path_params()
+        if not filter_params:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="no filter parameters provided",
+            )
+
+        # else for dynamic endpoint perform patch operation
+        data_objs = await DynamicDataRepository.update(
+            self.end_point_obj.id, filter_params, data
+        )
+
+        # returning datas from dynamic_data objs
+        return [dt.data for dt in data_objs]
 
     async def put(self):
         """

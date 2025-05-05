@@ -86,7 +86,9 @@ async def handle_post(
     summary="Handle PATCH request",
     description="Handle PATCH request",
 )
-async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: str):
+async def handle_patch(
+    request: Request, project_id: BeanieObjectId, endpoint: str, body: dict = Body(None)
+):
     project = await get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -101,31 +103,17 @@ async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: s
     # automatically raise method not found(405) if method is not there
     method = await endpoint_manager.resolve_methods(request.method)
 
-    data = await endpoint_manager.get_data()
-    return data
-
-
-@router.patch(
-    "/{project_id}/{endpoint:path}",
-    summary="Handle PATCH request",
-    description="Handle PATCH request",
-)
-async def handle_patch(request: Request, project_id: BeanieObjectId, endpoint: str):
-    project = await get_project_by_id(project_id)
-    if not project:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
-        )
-    user = project.user
-    endpoint_manager = EndpointManager(user, project, endpoint)
-
-    # rise 404 http exception if not found
-    end_point_obj = await endpoint_manager.resolve_end_point()
-
-    # automatically raise method not found(405) if method is not there
-    method = await endpoint_manager.resolve_methods(request.method)
-
-    data = await endpoint_manager.get_data()
+    # retrun data according to endpoint type
+    if end_point_obj.endpoint_type == EndpointTypes.DYNAMIC:
+        # body to endpoint type validation
+        if not body:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Dynamic api must includ a body",
+            )
+        data = await endpoint_manager.patch(data=body)
+    else:
+        data = await endpoint_manager.patch()
     return data
 
 

@@ -75,3 +75,26 @@ class DynamicDataRepository:
 
     async def list(endpoint_id: BeanieObjectId):
         return await DynamicData.find(DynamicData.endpoint.id == endpoint_id).to_list()
+
+    async def update(endpoint_id: BeanieObjectId, path_params_filter: dict, data: dict):
+        """
+        make query for get all dynamic data object
+        fiter using endpoint id
+        filter usig path params filter
+        then update the resultend record using data
+        """
+        query = {
+            "endpoint.$id": endpoint_id,
+            **{f"data.{k}": v for k, v in path_params_filter.items()},
+        }
+        matching_docs = await DynamicData.find(query).to_list()
+
+        # rise exception if no records found
+        if len(matching_docs) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="No records found"
+            )
+        for record in matching_docs:
+            record.data.update(data)
+            await record.save()  # TODO: optimize
+        return matching_docs

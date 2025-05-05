@@ -44,11 +44,9 @@ class Endpoints(Document):
 
     @before_event(Delete)
     async def cascade_delete_dynamic_data(self):
-        print(">>>>> delete acoited")
         # deleted associated dymanic data if endpoint_type is dynamic
         if self.endpoint_type == EndpointTypes.DYNAMIC:
             yy = await DynamicData.find(DynamicData.endpoint.id == self.id).delete()
-            print(">>>", yy)
 
 
 class DynamicData(Document):
