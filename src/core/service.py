@@ -29,6 +29,9 @@ class EndpointManager:
         self.end_point_obj = None
         self.method = None
 
+        self.path_parameters = dict()
+        self.query_parameters = dict()
+
     async def resolve_end_point(self):
         """
         resolve endpoint : check the endpoint is exist in db or not
@@ -118,6 +121,44 @@ class EndpointManager:
         raise HTTPException(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="Method not allowed"
         )
+
+    async def load_path_parameters(self):
+        """
+        Retrieve path parameters from url
+        store in class var as a dict named as self.path_parameters
+            [
+                {"field_name":"value passed in url"},
+            ]
+        """
+        url_path_chunks = self.end_point_string.strip("/").split(
+            "/"
+        )  # path retrieved from url
+        endpoint_chunks = self.end_point_obj.endpoint.strip("/").split(
+            "/"
+        )  # endpoint object matched with the url
+        for i in range(len(endpoint_chunks)):
+            if endpoint_chunks[i][0] == "{":
+                # append parameter into self.path_parameters
+                self.path_parameters.update(
+                    {endpoint_chunks[i].strip("{}"): url_path_chunks[i]}
+                )
+
+    async def load_query_parameters(self):
+        """
+        Retrieve query parameters from url
+        store in class var as a dict named as self.query_parameters
+            [
+                {"field_name":"value passed in url"},
+            ]
+        """
+        url_path_chunks = self.end_point_string.strip("/").split(
+            "?"
+        )  # path retrieved from url
+        for chunk in url_path_chunks:
+            # this chunk is a query param if and only if it contais a "="
+            if "=" in chunk:
+                key, val = chunk.split("=")
+                self.query_parameters.update({key: val})
 
     async def get_endpoint_type(self):
         """

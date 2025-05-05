@@ -74,7 +74,7 @@ async def handle_post(
             )
 
         # post data
-        # TODO: feat : body validation
+        # TODO: feat : body validation(serialization support)
         data = await endpoint_manager.post(data=body)
     else:
         data = await endpoint_manager.post()
