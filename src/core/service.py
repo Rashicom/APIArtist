@@ -6,6 +6,7 @@ from authx.models import User
 from typing import Dict
 from core.repository import CoreRepository
 from apigenerator.enums import HttpMethods, EndpointTypes
+from apigenerator.repository import DynamicDataRepository
 
 
 async def get_project_by_id(project_id: BeanieObjectId):
@@ -22,11 +23,14 @@ class EndpointManager:
     """
 
     def __init__(self, user: User, project: Project, end_point: str):
+        self.user = user
         self.project = project
         self.end_point_string = end_point
-        self.user = user
         self.end_point_obj = None
         self.method = None
+
+        self.path_parameters = dict()
+        self.query_parameters = dict()
 
     async def resolve_end_point(self):
         """
@@ -118,6 +122,56 @@ class EndpointManager:
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="Method not allowed"
         )
 
+    async def _load_path_parameters(self):
+        """
+        Retrieve path parameters from url
+        store in class var as a dict named as self.path_parameters
+            [
+                {"field_name":"value passed in url"},
+            ]
+        """
+        url_path_chunks = self.end_point_string.strip("/").split(
+            "/"
+        )  # path retrieved from url
+        endpoint_chunks = self.end_point_obj.endpoint.strip("/").split(
+            "/"
+        )  # endpoint object matched with the url
+        for i in range(len(endpoint_chunks)):
+            if endpoint_chunks[i][0] == "{":
+                # append parameter into self.path_parameters
+                self.path_parameters.update(
+                    {endpoint_chunks[i].strip("{}"): url_path_chunks[i]}
+                )
+        return self.path_parameters
+
+    async def _load_query_parameters(self):
+        """
+        Retrieve query parameters from url
+        store in class var as a dict named as self.query_parameters
+            [
+                {"field_name":"value passed in url"},
+            ]
+        """
+        url_path_chunks = self.end_point_string.strip("/").split(
+            "?"
+        )  # path retrieved from url
+        for chunk in url_path_chunks:
+            # this chunk is a query param if and only if it contais a "="
+            if "=" in chunk:
+                key, val = chunk.split("=")
+                self.query_parameters.update({key: val})
+        return self.query_parameters
+
+    async def get_query_params(self):
+        if not self.query_parameters:
+            await self._load_query_parameters()
+        return self.query_parameters
+
+    async def get_path_params(self):
+        if not self.path_parameters:
+            await self._load_path_parameters()
+        return self.path_parameters
+
     async def get_endpoint_type(self):
         """
         Get endpoit type(static, dynamic)
@@ -134,9 +188,10 @@ class EndpointManager:
         end_point_type = await self.get_endpoint_type()
         if end_point_type == EndpointTypes.STATIC:
             print("static buisiness logic")
-            return await self.__get()
+            return await self.get()
         else:
-            print("dynamic buisiness logic")
+            pass
+            # TODO: impliment dynamic logic
 
     async def set_data(self, method: str, data: Dict):
         """
@@ -146,46 +201,104 @@ class EndpointManager:
         """
         pass
 
-    async def __post(self):
+    async def post(self, data: Dict = None):
         """
         handle post
         """
+
+        # if static endpoint return specified data
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
-        pass
 
-    async def __get(self):
+        # else perform post operation
+        dynamic_data_obj = await DynamicDataRepository.create(
+            endpoint=self.end_point_obj, data=data
+        )
+        return dynamic_data_obj.data
+
+    async def get(self):
         """
         handle get
         """
+
+        # if static endpoint return specified data
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        return self.end_point_obj.dynamic_data
 
-    async def __patch(self):
+        # else perform get from dynamic data
+        dynamic_data_obj = await DynamicDataRepository.list(self.end_point_obj.id)
+
+        # returning datas from dynamic_data objs
+        return [dt.data for dt in dynamic_data_obj]
+
+    async def patch(self, data: Dict = None):
         """
         handle patch
+            - filter data which needs to be patched
+            - fetch data from path params
+            - update
         """
+        # if static endpoint return specified response
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
-        pass
 
-    async def __put(self):
+        filter_params = await self.get_path_params()
+        if not filter_params:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="no filter parameters provided",
+            )
+
+        # else for dynamic endpoint perform patch operation
+        data_objs = await DynamicDataRepository.update(
+            self.end_point_obj.id, filter_params, data
+        )
+
+        # returning datas from dynamic_data objs
+        return [dt.data for dt in data_objs]
+
+    async def put(self, data: Dict = None):
         """
         handle put
+            - filter data which needs to be patched
+            - fetch data from path params
+            - put
+        TODO: currently its implimentation ecactly like patch
+            - serializer needs to configure for put support
         """
+
+        # if static endpoint return specified response
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
-        pass
 
-    async def __delete(self):
+        filter_params = await self.get_path_params()
+        if not filter_params:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="no filter parameters provided",
+            )
+
+        # else for dynamic endpoint perform put operation
+        data_objs = await DynamicDataRepository.update(
+            self.end_point_obj.id, filter_params, data
+        )
+
+        # returning datas from dynamic_data objs
+        return [dt.data for dt in data_objs]
+
+    async def delete(self):
         """
         handle delete
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: handle dynamic operation
-        pass
+
+        filter_params = await self.get_path_params()
+        if not filter_params:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="no filter parameters provided",
+            )
+
+        # else for dynamic endpoint perform delete operation
+        await DynamicDataRepository.delete(self.end_point_obj.id, filter_params)

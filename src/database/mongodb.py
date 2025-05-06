@@ -3,7 +3,7 @@ from config import get_settings
 from beanie import init_beanie
 from authx.models import User
 from project.models import Project
-from apigenerator.models import Endpoints
+from apigenerator.models import Endpoints, DynamicData
 
 settings = get_settings()
 
@@ -23,7 +23,9 @@ class MongoDBConnection:
             raise Exception("MongoDB initialization Failed")
 
         print("MongoDB initialized successfully")
-        await init_beanie(database=self.db, document_models=[User, Project, Endpoints])
+        await init_beanie(
+            database=self.db, document_models=[User, Project, Endpoints, DynamicData]
+        )
         print("Beanie initialized successfully")
 
     async def close_connection(self):
