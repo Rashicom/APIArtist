@@ -98,3 +98,22 @@ class DynamicDataRepository:
             record.data.update(data)
             await record.save()  # TODO: optimize
         return matching_docs
+
+    async def delete(endpoint_id: BeanieObjectId, path_params_filter: dict):
+        """
+        - find recors using endpoint id and pathe params filter
+        - if not mathicng record rise exception
+        - else delete all record
+        """
+        query = {
+            "endpoint.$id": endpoint_id,
+            **{f"data.{k}": v for k, v in path_params_filter.items()},
+        }
+        matching_docs = await DynamicData.find(query)
+
+        # rise exception if no records found
+        if len(matching_docs) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="No records found"
+            )
+        await matching_docs.delete()

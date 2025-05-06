@@ -236,6 +236,7 @@ class EndpointManager:
         handle patch
             - filter data which needs to be patched
             - fetch data from path params
+            - update
         """
         # if static endpoint return specified response
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
@@ -256,14 +257,34 @@ class EndpointManager:
         # returning datas from dynamic_data objs
         return [dt.data for dt in data_objs]
 
-    async def put(self):
+    async def put(self, data: Dict = None):
         """
         handle put
+            - filter data which needs to be patched
+            - fetch data from path params
+            - put
+        TODO: currently its implimentation ecactly like patch
+            - serializer needs to configure for put support
         """
+
+        # if static endpoint return specified response
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: change dynamic data collection
-        pass
+
+        filter_params = await self.get_path_params()
+        if not filter_params:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="no filter parameters provided",
+            )
+
+        # else for dynamic endpoint perform put operation
+        data_objs = await DynamicDataRepository.update(
+            self.end_point_obj.id, filter_params, data
+        )
+
+        # returning datas from dynamic_data objs
+        return [dt.data for dt in data_objs]
 
     async def delete(self):
         """
@@ -271,5 +292,13 @@ class EndpointManager:
         """
         if await self.get_endpoint_type() == EndpointTypes.STATIC:
             return getattr(self.end_point_obj.static_data, self.method.lower())
-        # TODO: delete a perticular dynamic data collection
-        pass
+
+        filter_params = await self.get_path_params()
+        if not filter_params:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="no filter parameters provided",
+            )
+
+        # else for dynamic endpoint perform delete operation
+        await DynamicDataRepository.delete(self.end_point_obj.id, filter_params)
