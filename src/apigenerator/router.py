@@ -5,10 +5,11 @@ from .schema import (
     EndpointsResponseSchema,
     EndpointsUpdateSchema,
 )
-from .repository import EndpointRepository
+from .repository import EndpointRepository, DynamicDataRepository
 from project.repository import ProjectRepository
 from beanie import BeanieObjectId
 from typing import List
+from .enums import EndpointTypes
 
 router = APIRouter()
 
@@ -26,7 +27,16 @@ async def create_endpoint(user: CurrentUser, data: EndpointsRequestSchema):
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="project does not found",
         )
-    return await EndpointRepository.create(user=user, **data.model_dump())
+    endpoint_obj = await EndpointRepository.create(user=user, **data.model_dump())
+
+    # update dynamic data collection if endpoint type is dynamic
+    if endpoint_obj.endpoint_type == EndpointTypes.DYNAMIC:
+        dynamic_data_obj = await DynamicDataRepository.bulk_create(
+            data_list=[
+                {"endpoint": endpoint_obj, "data": dt} for dt in data.dynamic_data
+            ]
+        )
+    return endpoint_obj
 
 
 @router.get(

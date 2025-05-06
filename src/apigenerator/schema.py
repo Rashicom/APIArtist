@@ -1,4 +1,10 @@
-from pydantic import BaseModel, field_serializer, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    field_serializer,
+    field_validator,
+    model_validator,
+    Field,
+)
 from pydantic_core import PydanticCustomError
 from beanie import BeanieObjectId
 from typing import Dict, List, Any, Optional, Union
@@ -26,7 +32,6 @@ class EndpointsBaseSchema(BaseModel):
     methods: List[HttpMethods]
     endpoint_type: EndpointTypes
     static_data: Optional[StaticData] = None
-    dynamic_data: Optional[List[Dict[str, Any]]] = None
 
     @field_validator("endpoint", mode="before")
     @classmethod
@@ -36,12 +41,17 @@ class EndpointsBaseSchema(BaseModel):
             raise PydanticCustomError(
                 "Invalied endpoint", "endpoint should not contain any restricted chars"
             )
+        if any(char in endpoint for char in {"?"}):
+            raise PydanticCustomError(
+                "Invalied endpoint",
+                "endpoint should not contain query parameter expressions whire register",
+            )
         # append prefix if not there
         return endpoint if endpoint.startswith("/") else f"/{endpoint}"
 
     @model_validator(mode="before")
     @classmethod
-    def validate_endpoint_type(cls, data):
+    def validate_endpoint_type(cls, data: Dict):
         # check the static data and dynamic data provided according to the endpoint type
         if data.get("endpoint_type") == EndpointTypes.STATIC:
             if not data.get("static_data"):
@@ -73,7 +83,7 @@ class EndpointsBaseSchema(BaseModel):
 
 
 class EndpointsRequestSchema(EndpointsBaseSchema):
-    pass
+    dynamic_data: List[Dict] = Field(default_factory=list)
 
 
 class EndpointsUpdateSchema(BaseModel):

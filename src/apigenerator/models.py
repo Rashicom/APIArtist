@@ -1,8 +1,8 @@
-from beanie import Document, Link
+from beanie import Document, Link, before_event, Delete
 from typing import Optional, List, Dict, Any
 from authx.models import User
 from project.models import Project
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .enums import EndpointTypes, HttpMethods
 from .schema import StaticData
 
@@ -42,12 +42,32 @@ class Endpoints(Document):
     """
     static_data: Optional[StaticData] = None
 
-    # dynamic endpoint, this data can be changed by put, patch and delete requests
+    @before_event(Delete)
+    async def cascade_delete_dynamic_data(self):
+        # deleted associated dymanic data if endpoint_type is dynamic
+        if self.endpoint_type == EndpointTypes.DYNAMIC:
+            yy = await DynamicData.find(DynamicData.endpoint.id == self.id).delete()
+
+
+class DynamicData(Document):
     """
     This table store the data of dynamic api
     endpoints can filter and change the data(put,patch, delete)
 
     records limit:
         - an endpoints can have n number of records accordint to which package they purchased
+
+    data : -
+        - data is considred as a row in table
+        - each data post create a object in this collection
+
+    WARNING : as data grows this collection size can grow to critical
+    SOLUTION TODO:
+        - make data as a List[Dict] and restrict size of list to a appropreate len wich size less than mondodb max value size
+        - one the max limit of one object reached save other data in a new record
+        - while retrieving/operation data, aggrage all data then perform
+
     """
-    dynamic_data: Optional[List[Dict]] = None
+
+    endpoint: Link[Endpoints]
+    data: dict = Field(default_factory=dict)
